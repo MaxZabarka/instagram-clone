@@ -1,0 +1,13 @@
+.Dots {
+    display: flex;
+    div {
+        border-radius: 50%;
+        margin: 0.12rem;
+        width:0.4rem;
+        height:0.4rem;
+        background:#bbb;
+    }
+    .active {
+        background: rgb(0, 140, 255)
+    }
+}

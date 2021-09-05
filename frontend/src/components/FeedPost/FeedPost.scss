@@ -1,0 +1,86 @@
+.FeedPost {
+
+  @media only screen and (min-width: 38rem) {
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+	margin-top: rem;
+
+  }
+  display: flex;
+  flex-direction: column;
+
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    .post-header-creator {
+      display: flex;
+      align-items: center;
+      h2 {
+		font-size: 0.875rem;
+        margin: 0;
+        vertical-align: middle;
+      }
+    }
+    .post-header-options {
+      margin: 0 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  .post-image {
+    width: 100%;
+    background-size: contain;
+    img {
+      visibility: hidden;
+      width: 100%;
+    }
+  }
+
+  .post-footer {
+    margin: 0.3rem 0.5rem;
+    .post-footer-actions {
+      display: flex;
+      justify-content: space-around;
+
+      .like-comment-send {
+        flex: 5;
+      }
+      .pagination {
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        flex: 1;
+        color: black;
+      }
+      .save {
+        display: flex;
+        justify-content: flex-end;
+        flex: 5;
+      }
+    }
+    .post-footer-caption {
+      margin: 0.5rem;
+      a,
+      p {
+        font-size: 0.875rem;
+      }
+      a {
+        color: black;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      p {
+        text-overflow: ellipsis;
+        line-height: 1.35;
+        display: inline;
+      }
+      .more {
+        opacity: 0.5;
+        cursor: pointer;
+      }
+    }
+  }
+}
