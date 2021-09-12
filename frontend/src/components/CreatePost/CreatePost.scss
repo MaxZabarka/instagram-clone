@@ -1,0 +1,13 @@
+.CreatePost {
+    position: fixed;
+    top:5rem;
+    z-index: 2;
+    .backdrop {
+        width:100vw;
+        height:100vw;
+        position: fixed;
+        top:0;
+        background:black;
+        opacity: 0.5;
+    }
+}

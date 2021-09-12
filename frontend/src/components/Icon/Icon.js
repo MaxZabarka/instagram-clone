@@ -7,8 +7,9 @@ import sendImage from "./images/send.png";
 import addImage from "./images/add.png"
 import compassImage from "./images/compass.png"
 import homeImage from "./images/home.png"
+import closeImage from "./images/close.png"
 
-const images = { likeImage, commentImage, saveImage, sendImage, addImage, homeImage, compassImage };
+const images = { likeImage, commentImage, saveImage, sendImage, addImage, homeImage, compassImage, closeImage };
 
 const Icon = (props) => {
   const size = props.size || "25rem";
@@ -19,7 +20,7 @@ const Icon = (props) => {
       alt={props.type}
       width={size}
       height={size}
-      onClick={props.clicked}
+      onClick={props.onClick}
     />
   );
 };

@@ -11,9 +11,8 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    margin-left: calc((100vw - 38rem)/2);
-
-    // max-width: 38rem;
+    // margin-left: calc((100vw - 38rem)/2);
+    max-width: 38rem;
     .brand, .actions, .search {
         flex:1;
     }
@@ -30,11 +29,15 @@
       }
     }
     .search {
+        visibility: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
     }
     .actions {
+        img {
+            margin: 0 0.6rem;
+        }
         display: flex;
         justify-content: flex-end;
         align-items: center;
