@@ -19,8 +19,24 @@ const SelectImage = (props) => {
     <div className="SelectImage">
       <div className="header">
         <div className="exit-and-title">
-          <Icon type="close" size="25rem" onClick={props.onClose}/>
+          <Icon type="close" size="25rem" onClick={props.onClose} />
           <h1>New post</h1>
+        </div>
+        <div className="next">
+          <Icon
+            type="arrow"
+            size="30rem"
+            onClick={() => {
+              console.log(imageOrder)
+              if (
+                !imageOrder.every((element) => {
+                  return element === null;
+                })
+              ) {
+                props.onNext(imageOrder);
+              }
+            }}
+          ></Icon>
         </div>
       </div>
       {props.images.length !== 0 ? (
@@ -34,7 +50,7 @@ const SelectImage = (props) => {
                 <ImageIcon
                   index={imageOrder[index]}
                   image={image}
-                  selected={activeImage===index}
+                  selected={activeImage === index}
                   onClick={() => {
                     setActiveImage(index);
                   }}

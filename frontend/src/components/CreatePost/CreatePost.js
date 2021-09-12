@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import Modal from "../Modal/Modal";
-import "./CreatePost.scss";
+import React, { useEffect, useState } from "react";
 import SelectImage from "./SelectImage/SelectImage";
+import "./CreatePost.scss";
+import { withAxios } from "react-axios";
 
 const readImage = (file) => {
   return new Promise((resolve, reject) => {
@@ -14,57 +14,66 @@ const readImage = (file) => {
   });
 };
 
-const CreatePost = (props) => {
-  const inputRef = useRef(null);
-  const [fileSelected, setFileSelected] = useState(false);
+const uploadPost = (axios, images, description) => {
+  const formData = new FormData();
+  const jsonData = JSON.stringify({
+    description:"lorem ipsum blah blah blah"
+  })
+
+  for (const image of images) {
+    console.log(image);
+    formData.append("images", image);
+  }
+  formData.append("document", jsonData);
+
+  axios.post("http://localhost:5000/posts", formData);
+  console.log(formData);
+};
+
+const CreatePost = withAxios((props) => {
   const [images, setImages] = useState([]);
+  const [orderedImages, setOrderedImages] = useState([]);
+  const [createPostPage, setCreatePostPage] = useState(0)
 
   useEffect(() => {
-    console.log("123asd");
-    console.log(inputRef.current);
-    inputRef.current.click();
-  }, []);
+    console.log(props.files);
+    const promiseArray = [];
+    for (let i = 0; i < props.files.length; i++) {
+      promiseArray.push(readImage(props.files[i]));
+    }
 
-  useEffect(() => {
-    setFileSelected(!!images.length);
-  }, [images]);
-
-  const onCloseHandler = () => {
-    inputRef.current.value = null;
-    setFileSelected(false);
-    setImages([]);
-    props.onClose();
-  };
+    Promise.all(promiseArray).then((dataImages) => {
+      setImages(dataImages);
+    });
+  }, [props.files]);
 
   return (
     <div className="CreatePost">
       <div
-        className={fileSelected ? "backdrop" : ""}
-        onClick={onCloseHandler}
+        className={images.length !== 0 ? "backdrop" : ""}
+        onClick={props.onClose}
       />
-      <input
-        onChange={() => {
-          setFileSelected(true);
-          const promiseArray = [];
-          for (let i = 0; i < inputRef.current.files.length; i++) {
-            promiseArray.push(readImage(inputRef.current.files[i]));
-          }
 
-          Promise.all(promiseArray).then((dataImages) => {
-            setImages(dataImages);
-          });
-        }}
-        ref={inputRef}
-        type="file"
-        style={{ display: "none" }}
-        multiple
-      />
-      {fileSelected ? (
-        <SelectImage images={images} onClose={onCloseHandler} />
+      {images.length !== 0 ? (
+        <SelectImage
+          images={images}
+          onClose={props.onClose}
+          page={createPostPage}
+          onNext={(imageOrder) => {
+            const newOrderedImages = [];
+            for (let i = 0; i < imageOrder.length; i++) {
+              if (imageOrder[i] !== null) {
+                newOrderedImages[imageOrder[i]] = props.files[i];
+              }
+            }
+            setOrderedImages(newOrderedImages)
+            setCreatePostPage(1)
+            // uploadPost(props.axios, orderedImages);
+          }}
+        />
       ) : null}
     </div>
-    // </Modal>
   );
-};
+});
 
 export default CreatePost;

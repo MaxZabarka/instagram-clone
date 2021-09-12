@@ -12,6 +12,8 @@
   flex-flow: column;
 
   .header {
+    display: flex;
+    justify-content: space-between;
     .exit-and-title {
       display: flex;
       align-items: center;
@@ -23,6 +25,14 @@
       img {
         margin: 1.2rem 2rem 1.2rem 1.2rem;
       }
+    }
+    .next {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      filter: invert(35%) sepia(54%) saturate(2655%) hue-rotate(190deg) brightness(102%) contrast(107%);
+      margin: 1rem;
+
     }
   }
 

@@ -1,28 +1,40 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 import CreatePost from "./components/CreatePost/CreatePost";
 import Navbar from "./components/Navigation/Navbar/Navbar";
 import Home from "./pages/Home";
 
 function App() {
-  const [creatingPost, setCreatingPost] = useState(false);
+  // const [creatingPost, setCreatingPost] = useState(false);
+  const [files, setFiles] = useState([]);
+  const inputRef = useRef(null);
   return (
     <div className="App">
-      <Navbar
-        onCreatePost={() => {
-          setCreatingPost(true);
-          console.log("set true");
-        }}
-      />
-      <Home />
-      {creatingPost ? (
-        <CreatePost
-          onClose={() => {
-            setCreatingPost(false);
-            console.log("set false");
+        <Navbar
+          onCreatePost={() => {
+            inputRef.current.click();
           }}
         />
-      ) : null}
+        <Home />
+        {files ? (
+          <CreatePost
+            files={files}
+            onClose={() => {
+              setFiles([]);
+            }}
+          />
+        ) : null}
+        <input
+          type="file"
+          style={{ display: "none" }}
+          ref={inputRef}
+          accept=".jpg,.png,.jpeg"
+          multiple
+          onChange={() => {
+            setFiles([...inputRef.current.files]);
+            inputRef.current.value = null;
+          }}
+        />
     </div>
   );
 }
