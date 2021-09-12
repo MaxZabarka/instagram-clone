@@ -1,0 +1,38 @@
+.ImagePicker {
+  .preview {
+    background: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vw;
+    max-height: 30rem;
+
+    img {
+      width: 100%;
+      object-fit: contain;
+      height: 100%;
+      animation: fadeIn 0.3s linear;
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .images {
+    overflow-y: auto;
+    max-height: 100%;
+    display: grid;
+    margin: 0.2rem;
+    grid-gap: 0.2rem;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+
+    @media only screen and (max-width: 265px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

@@ -17,8 +17,8 @@ const readImage = (file) => {
 const uploadPost = (axios, images, description) => {
   const formData = new FormData();
   const jsonData = JSON.stringify({
-    description:"lorem ipsum blah blah blah"
-  })
+    description: "lorem ipsum blah blah blah",
+  });
 
   for (const image of images) {
     console.log(image);
@@ -33,7 +33,6 @@ const uploadPost = (axios, images, description) => {
 const CreatePost = withAxios((props) => {
   const [images, setImages] = useState([]);
   const [orderedImages, setOrderedImages] = useState([]);
-  const [createPostPage, setCreatePostPage] = useState(0)
 
   useEffect(() => {
     console.log(props.files);
@@ -54,11 +53,10 @@ const CreatePost = withAxios((props) => {
         onClick={props.onClose}
       />
 
-      {images.length !== 0 ? (
+      {props.files.length !== 0 ? (
         <SelectImage
           images={images}
           onClose={props.onClose}
-          page={createPostPage}
           onNext={(imageOrder) => {
             const newOrderedImages = [];
             for (let i = 0; i < imageOrder.length; i++) {
@@ -66,9 +64,7 @@ const CreatePost = withAxios((props) => {
                 newOrderedImages[imageOrder[i]] = props.files[i];
               }
             }
-            setOrderedImages(newOrderedImages)
-            setCreatePostPage(1)
-            // uploadPost(props.axios, orderedImages);
+            setOrderedImages(newOrderedImages);
           }}
         />
       ) : null}

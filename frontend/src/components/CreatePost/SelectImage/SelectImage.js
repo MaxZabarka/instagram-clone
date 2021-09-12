@@ -1,20 +1,27 @@
 import React, { useState } from "react";
-import { useEffect } from "react/cjs/react.development";
 import Icon from "../../Icon/Icon";
-import Spinner from "../../Spinner/Spinner";
-import ImageIcon from "../ImageIcon/ImageIcon";
+import DescriptionPicker from "./DescriptionPicker/DescriptionPicker";
+import ImagePicker from "./ImagePicker/ImagePicker";
 import "./SelectImage.scss";
 
 const SelectImage = (props) => {
-  const [imageOrder, setImageOrder] = useState([
-    ...Array(props.images.length).keys(),
-  ]);
+  const [imageOrder, setImageOrder] = useState([]);
+  const [page, setPage] = useState(0);
 
-  useEffect(() => {
-    setImageOrder([...Array(props.images.length).keys()]);
-  }, [props.images.length]);
+  let rv = null;
+  if (page === 0) {
+    rv = (
+      <ImagePicker
+        onOrderChange={(newOrder) => {
+          setImageOrder(newOrder);
+        }}
+        images={props.images}
+      />
+    );
+  } else if (page === 1) {
+    rv = <DescriptionPicker />;
+  }
 
-  const [activeImage, setActiveImage] = useState(0);
   return (
     <div className="SelectImage">
       <div className="header">
@@ -27,65 +34,20 @@ const SelectImage = (props) => {
             type="arrow"
             size="30rem"
             onClick={() => {
-              console.log(imageOrder)
+              console.log(imageOrder);
               if (
                 !imageOrder.every((element) => {
                   return element === null;
                 })
               ) {
-                props.onNext(imageOrder);
+                setPage(1);
+                // props.onNext(imageOrder);
               }
             }}
           ></Icon>
         </div>
       </div>
-      {props.images.length !== 0 ? (
-        <>
-          <div className="preview">
-            <img key={activeImage} src={props.images[activeImage]} alt="" />
-          </div>
-          <div className="images">
-            {props.images.map((image, index) => {
-              return (
-                <ImageIcon
-                  index={imageOrder[index]}
-                  image={image}
-                  selected={activeImage === index}
-                  onClick={() => {
-                    setActiveImage(index);
-                  }}
-                  onIndexClick={() => {
-                    const newOrder = [...imageOrder];
-                    if (newOrder[index] !== null) {
-                      for (let i = 0; i < props.images.length; i++) {
-                        if (newOrder[index] < newOrder[i]) {
-                          newOrder[i] = newOrder[i] - 1;
-                        }
-                      }
-                      newOrder[index] = null;
-                    } else {
-                      //Array contains only null (no images are selected)
-                      if (
-                        newOrder.every((element) => {
-                          return element === null;
-                        })
-                      ) {
-                        newOrder[index] = 0;
-                      } else {
-                        newOrder[index] = Math.max(...newOrder) + 1;
-                      }
-                    }
-
-                    setImageOrder(newOrder);
-                  }}
-                />
-              );
-            })}
-          </div>
-        </>
-      ) : (
-        <Spinner />
-      )}
+      {rv}
     </div>
   );
 };
