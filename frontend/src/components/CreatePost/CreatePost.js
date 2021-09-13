@@ -17,7 +17,7 @@ const readImage = (file) => {
 const uploadPost = (axios, images, description) => {
   const formData = new FormData();
   const jsonData = JSON.stringify({
-    description: "lorem ipsum blah blah blah",
+    description,
   });
 
   for (const image of images) {
@@ -32,7 +32,6 @@ const uploadPost = (axios, images, description) => {
 
 const CreatePost = withAxios((props) => {
   const [images, setImages] = useState([]);
-  const [orderedImages, setOrderedImages] = useState([]);
 
   useEffect(() => {
     console.log(props.files);
@@ -47,28 +46,30 @@ const CreatePost = withAxios((props) => {
   }, [props.files]);
 
   return (
-    <div className="CreatePost">
+    <>
       <div
         className={images.length !== 0 ? "backdrop" : ""}
         onClick={props.onClose}
       />
-
-      {props.files.length !== 0 ? (
-        <SelectImage
-          images={images}
-          onClose={props.onClose}
-          onNext={(imageOrder) => {
-            const newOrderedImages = [];
-            for (let i = 0; i < imageOrder.length; i++) {
-              if (imageOrder[i] !== null) {
-                newOrderedImages[imageOrder[i]] = props.files[i];
+      <div className="CreatePost">
+        {props.files.length !== 0 ? (
+          <SelectImage
+            images={images}
+            onClose={props.onClose}
+            onNext={(imageOrder, description) => {
+              const orderedImages = [];
+              for (let i = 0; i < imageOrder.length; i++) {
+                if (imageOrder[i] !== null) {
+                  orderedImages[imageOrder[i]] = props.files[i];
+                }
               }
-            }
-            setOrderedImages(newOrderedImages);
-          }}
-        />
-      ) : null}
-    </div>
+              uploadPost(props.axios, orderedImages, description);
+              props.onClose()
+            }}
+          />
+        ) : null}
+      </div>
+    </>
   );
 });
 

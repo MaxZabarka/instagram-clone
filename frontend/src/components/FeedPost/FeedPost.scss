@@ -1,14 +1,13 @@
 .FeedPost {
-
+  // overflow: hidden;
   @media only screen and (min-width: 38rem) {
     border: 1px solid #dbdbdb;
     border-radius: 5px;
-	margin-top: rem;
-
+    margin-top: 2rem;
   }
   display: flex;
   flex-direction: column;
-
+  padding-bottom: 0.7rem;
   .post-header {
     display: flex;
     justify-content: space-between;
@@ -16,7 +15,7 @@
       display: flex;
       align-items: center;
       h2 {
-		font-size: 0.875rem;
+        font-size: 0.875rem;
         margin: 0;
         vertical-align: middle;
       }
@@ -26,15 +25,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-  }
-
-  .post-image {
-    width: 100%;
-    background-size: contain;
-    img {
-      visibility: hidden;
-      width: 100%;
     }
   }
 
@@ -73,7 +63,7 @@
         font-weight: bold;
       }
       p {
-        text-overflow: ellipsis;
+        overflow-wrap: break-word;
         line-height: 1.35;
         display: inline;
       }

@@ -1,0 +1,9 @@
+.PostImage {
+  display: inline-block;
+  width: 100%;
+  background-size: contain;
+  img {
+    visibility: hidden;
+    width: 100%;
+  }
+}

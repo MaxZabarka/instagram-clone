@@ -17,6 +17,7 @@ const ImagePicker = (props) => {
   useEffect(() => {
     onOrderChange(imageOrder);
   }, [imageOrder, onOrderChange]);
+
   return props.images.length !== 0 ? (
     <div className="ImagePicker">
       <div className="preview">

@@ -1,0 +1,33 @@
+.DescriptionPicker {
+    // overflow: scroll;
+    overflow-y: auto;
+
+    .input {
+        align-items: center;
+        width: 100%;
+        display: flex;
+        .avatar {
+            margin-left:0.8rem;
+        }
+        // span:empty::before {
+        //     content: "Placeholder still possible";
+        //     color: gray;
+        //   }
+        textarea {
+            overflow: hidden;
+            font-size: 1.0rem;
+            flex:1;
+            resize: none;
+            height:1rem;
+            outline: none;
+            border:none;
+            font-family: unset;
+        }
+        .preview {
+            object-fit: cover;
+            margin:0.8rem;
+            width:3rem;
+            height:3rem;
+        }
+    }
+}

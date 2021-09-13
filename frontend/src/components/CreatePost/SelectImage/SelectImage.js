@@ -6,6 +6,7 @@ import "./SelectImage.scss";
 
 const SelectImage = (props) => {
   const [imageOrder, setImageOrder] = useState([]);
+  const [description, setDescription] = useState("");
   const [page, setPage] = useState(0);
 
   let rv = null;
@@ -19,14 +20,32 @@ const SelectImage = (props) => {
       />
     );
   } else if (page === 1) {
-    rv = <DescriptionPicker />;
+    rv = (
+      <DescriptionPicker
+        previewImage={props.images[imageOrder.indexOf(0)]}
+        onDescriptionChange={(newDescription) => {
+          console.log(newDescription)
+          setDescription(newDescription)
+        }}
+      />
+    );
   }
 
   return (
     <div className="SelectImage">
       <div className="header">
         <div className="exit-and-title">
-          <Icon type="close" size="25rem" onClick={props.onClose} />
+          <Icon
+            type="close"
+            size="25rem"
+            onClick={() => {
+              if (page === 0) {
+                props.onClose();
+              } else {
+                setPage(page - 1);
+              }
+            }}
+          />
           <h1>New post</h1>
         </div>
         <div className="next">
@@ -36,12 +55,14 @@ const SelectImage = (props) => {
             onClick={() => {
               console.log(imageOrder);
               if (
+                page === 0 &&
                 !imageOrder.every((element) => {
                   return element === null;
                 })
               ) {
                 setPage(1);
-                // props.onNext(imageOrder);
+              } else {
+                props.onNext(imageOrder, description);
               }
             }}
           ></Icon>

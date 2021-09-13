@@ -1,13 +1,18 @@
 .CreatePost {
-    position: fixed;
-    top:5rem;
-    z-index: 2;
-    .backdrop {
-        width:100vw;
-        height:100vw;
-        position: fixed;
-        top:0;
-        background:black;
-        opacity: 0.5;
-    }
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+
+  justify-content: center;
+  display: flex;
+}
+.backdrop {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  background: black;
+  opacity: 0.5;
 }

@@ -7,11 +7,11 @@
   border-bottom: 1px solid #dbdbdb;
   display: flex;
   justify-content: center;
+  z-index: 2;
   .wrapper {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    // margin-left: calc((100vw - 38rem)/2);
     max-width: 38rem;
     .brand, .actions, .search {
         flex:1;
