@@ -1,0 +1,11 @@
+.NavArrow {
+    cursor: pointer;
+    width:1.7rem;
+    margin: 1rem;
+    img {
+        width: 100%;
+        opacity: 0.5;
+        filter: invert(1) drop-shadow(3px 3px 3px black);
+
+    }
+}

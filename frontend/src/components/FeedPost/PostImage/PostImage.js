@@ -6,12 +6,12 @@ const PostImage = (props) => {
     <div
       className="PostImage"
       style={{
-        backgroundImage: "url(" + "http://localhost:5000/" + props.imageUrl + ")",
+        backgroundImage: "url(" + "http://192.168.1.77:5000/" + props.imageUrl + ")",
       }}
     >
       <img
         onLoad={props.onLoad}
-        src={"http://localhost:5000/" + props.imageUrl}
+        src={"http://192.168.1.77:5000/" + props.imageUrl}
         className="image"
         alt=""
       />

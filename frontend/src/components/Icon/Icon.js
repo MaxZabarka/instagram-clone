@@ -9,6 +9,9 @@ import compassImage from "./images/compass.png";
 import homeImage from "./images/home.png";
 import closeImage from "./images/close.png";
 import arrowImage from "./images/arrow.png";
+import sendImageFilled from "./images/send_filled.png"
+import homeImageFilled from "./images/home_filled.png"
+import compassImageFilled from "./images/compass_filled.png"
 
 const images = {
   likeImage,
@@ -20,6 +23,9 @@ const images = {
   compassImage,
   closeImage,
   arrowImage,
+  sendImageFilled,
+  homeImageFilled,
+  compassImageFilled
 };
 
 const Icon = (props) => {
@@ -27,7 +33,7 @@ const Icon = (props) => {
   return (
     <img
       className="Icon"
-      src={images[props.type + "Image"]}
+      src={images[props.type + "Image" + (props.filled ? "Filled" : "")]}
       alt={props.type}
       width={size}
       height={size}

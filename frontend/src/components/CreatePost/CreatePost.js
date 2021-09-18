@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import SelectImage from "./SelectImage/SelectImage";
 import "./CreatePost.scss";
 import { withAxios } from "react-axios";
+import cropImage from "../../util/image-processing/cropImage";
+import dataURItoBlob from "../../util/image-processing/dataURItoBlob";
+import io from "socket.io-client";
 
 const readImage = (file) => {
   return new Promise((resolve, reject) => {
@@ -14,6 +17,18 @@ const readImage = (file) => {
   });
 };
 
+const readAndCropImage = (file) => {
+  return new Promise((resolve, reject) => {
+    readImage(file)
+      .then((image) => {
+        return cropImage(image);
+      })
+      .then((image) => {
+        resolve(image);
+      });
+  });
+};
+
 const uploadPost = (axios, images, description) => {
   const formData = new FormData();
   const jsonData = JSON.stringify({
@@ -21,12 +36,14 @@ const uploadPost = (axios, images, description) => {
   });
 
   for (const image of images) {
-    console.log(image);
-    formData.append("images", image);
+    formData.append("images", dataURItoBlob(image));
   }
   formData.append("document", jsonData);
-
-  axios.post("http://localhost:5000/posts", formData);
+  const socket = io("127.0.0.1:4000");
+  socket.on('hello', function(data){
+    console.log(data)
+  })
+  axios.post("http://192.168.1.77:5000/posts", formData);
   console.log(formData);
 };
 
@@ -34,13 +51,12 @@ const CreatePost = withAxios((props) => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    console.log(props.files);
-    const promiseArray = [];
+    const readPromiseArray = [];
     for (let i = 0; i < props.files.length; i++) {
-      promiseArray.push(readImage(props.files[i]));
+      readPromiseArray.push(readAndCropImage(props.files[i]));
     }
 
-    Promise.all(promiseArray).then((dataImages) => {
+    Promise.all(readPromiseArray).then((dataImages) => {
       setImages(dataImages);
     });
   }, [props.files]);
@@ -60,11 +76,11 @@ const CreatePost = withAxios((props) => {
               const orderedImages = [];
               for (let i = 0; i < imageOrder.length; i++) {
                 if (imageOrder[i] !== null) {
-                  orderedImages[imageOrder[i]] = props.files[i];
+                  orderedImages[imageOrder[i]] = images[i];
                 }
               }
               uploadPost(props.axios, orderedImages, description);
-              props.onClose()
+              props.onClose();
             }}
           />
         ) : null}

@@ -6,6 +6,7 @@ import "./FeedPost.scss";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper.min.css";
 import PostImage from "./PostImage/PostImage";
+import NavArrow from "./NavArrow/NavArrow";
 
 const FeedPost = (props) => {
   const [imagesLoaded, setImagesLoaded] = useState(0);
@@ -18,7 +19,7 @@ const FeedPost = (props) => {
   const onImageLoadHandler = () => {
     setImagesLoaded(imagesLoaded + 1);
   };
-
+  console.log(`activePost`, activePost)
   return (
     <div
       className="FeedPost"
@@ -36,25 +37,40 @@ const FeedPost = (props) => {
         </div>
       </div>
       {props.imageUrls.length !== 1 ? (
-        <Swiper
-          observer={true}
-          observeParents={true}
-          onSlideChange={() => {
-            setActivePost(swiper.activeIndex);
-          }}
-          onSwiper={(swiper) => {
-            setSwiper(swiper);
-            swiper.wrapperEl.style.alignItems = "center";
-          }}
-        >
-          {props.imageUrls.map((imageUrl) => {
-            return (
-              <SwiperSlide>
-                <PostImage imageUrl={imageUrl} onLoad={onImageLoadHandler} />
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
+        <>
+          <Swiper
+            observer={true}
+            observeParents={true}
+            onSlideChange={() => {
+              setActivePost(swiper.activeIndex);
+            }}
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+              swiper.wrapperEl.style.alignItems = "center";
+            }}
+          >
+            <div className="navigation">
+              {activePost !== 0 ? <NavArrow onClick={
+                  () => {
+                    swiper.slidePrev()
+                  }}/> : <div/>}
+              {activePost !== props.imageUrls.length-1 ? (
+                <NavArrow right onClick={
+                  () => {
+                    swiper.slideNext()
+                  }
+                }/>
+              ) : <div/>}
+            </div>
+            {props.imageUrls.map((imageUrl) => {
+              return (
+                <SwiperSlide>
+                  <PostImage imageUrl={imageUrl} onLoad={onImageLoadHandler} />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </>
       ) : (
         <PostImage imageUrl={props.imageUrls[0]} onLoad={onImageLoadHandler} />
       )}

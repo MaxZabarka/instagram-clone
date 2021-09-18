@@ -9,6 +9,7 @@
   display: flex;
 }
 .backdrop {
+  z-index: 3;
   position: fixed;
   width: 100vw;
   height: 100vh;

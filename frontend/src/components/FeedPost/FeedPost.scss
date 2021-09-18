@@ -1,12 +1,9 @@
 .FeedPost {
-  // overflow: hidden;
   @media only screen and (min-width: 38rem) {
     border: 1px solid #dbdbdb;
     border-radius: 5px;
     margin-top: 2rem;
   }
-  display: flex;
-  flex-direction: column;
   padding-bottom: 0.7rem;
   .post-header {
     display: flex;
@@ -25,6 +22,20 @@
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+  }
+
+  .navigation {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 2;
+    @media only screen and (max-width: 38rem) {
+      display: none;
     }
   }
 

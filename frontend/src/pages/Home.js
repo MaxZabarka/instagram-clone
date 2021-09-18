@@ -5,7 +5,7 @@ import { Get } from "react-axios";
 const Home = () => {
   return (
     <div>
-      <Get url="http://localhost:5000/posts">
+      <Get url="http://192.168.1.77:5000/posts">
         {(error, response, isLoading, makeRequest, axios) => {
           if (error) {
             return <div>Something went wrong!: {error.message} </div>;
