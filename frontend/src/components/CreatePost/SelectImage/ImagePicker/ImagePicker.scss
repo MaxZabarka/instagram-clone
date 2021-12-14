@@ -1,4 +1,8 @@
 .ImagePicker {
+  display: flex;
+  overflow: hidden;
+  height: 100%;
+  flex-direction: column;
   .preview {
     background: #eee;
     display: flex;
@@ -26,10 +30,15 @@
   .images {
     overflow-y: auto;
     max-height: 100%;
-    display: grid;
-    margin: 0.2rem;
-    grid-gap: 0.2rem;
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    // display: grid;
+    width: 100%;
+    // margin: 0.2rem;
+    // grid-gap: 0.2rem;
+    // grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    // grid-template-rows: repeat(auto-fill, minmax(8rem, 1fr));
 
     @media only screen and (max-width: 265px) {
       grid-template-columns: repeat(2, 1fr);

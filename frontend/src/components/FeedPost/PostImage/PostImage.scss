@@ -1,5 +1,6 @@
 .PostImage {
-  display: inline-block;
+  display: flex;
+  align-items: flex-start;
   width: 100%;
   background-size: contain;
   img {

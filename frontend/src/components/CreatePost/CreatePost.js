@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SelectImage from "./SelectImage/SelectImage";
 import "./CreatePost.scss";
 import { withAxios } from "react-axios";
 import cropImage from "../../util/image-processing/cropImage";
 import dataURItoBlob from "../../util/image-processing/dataURItoBlob";
 import io from "socket.io-client";
+import Modal from "../Modal/Modal";
 
 const readImage = (file) => {
   return new Promise((resolve, reject) => {
@@ -29,7 +30,15 @@ const readAndCropImage = (file) => {
   });
 };
 
-const uploadPost = (axios, images, description) => {
+const uploadPost = (
+  axios,
+  images,
+  description,
+  setModalMessage,
+  onUploadProgressChange,
+  onProcessProgressChange,
+  selfRef
+) => {
   const formData = new FormData();
   const jsonData = JSON.stringify({
     description,
@@ -39,16 +48,72 @@ const uploadPost = (axios, images, description) => {
     formData.append("images", dataURItoBlob(image));
   }
   formData.append("document", jsonData);
-  const socket = io("127.0.0.1:4000");
-  socket.on('hello', function(data){
-    console.log(data)
-  })
-  axios.post("http://192.168.1.77:5000/posts", formData);
+  const socket = io(process.env.REACT_APP_API_WEBSOCKET_URL, {
+    reconnection: false,
+    query: {
+      token: localStorage.getItem("token"),
+    },
+  });
+  selfRef.current.imagesProcessed = 0;
+  socket.on("connect", () => {
+    axios
+      .post(process.env.REACT_APP_API_URL+"/posts", formData, {
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+      })
+      .catch((error) => {
+        if (error.response) {
+          setModalMessage(error.response.data.errorMessage);
+        } else {
+          setModalMessage("Something went wrong");
+        }
+      });
+  });
+  socket.on("file_upload", (data) => {
+    console.log("file_upload", data);
+    onUploadProgressChange(data.percentage, images[0]);
+    console.log(`data.percentage`, data.percentage);
+  });
+  socket.on("image_processed", (data) => {
+    selfRef.current.imagesProcessed++;
+    onProcessProgressChange(
+      (selfRef.current.imagesProcessed / images.length) * 100,
+      images[data.index]
+    );
+  });
+  socket.on("connect_error", (err) => {
+    console.log(
+      `error`,
+      JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)))
+    );
+    setModalMessage(
+      "Unable to connect. Check your internet connection and try again."
+    );
+  });
+  socket.on("error", (error) => {
+    setModalMessage(error.errorMessage);
+  });
+  socket.io.on("reconnect_failed", () => {
+    console.log("FAILED FAILED FAILEd");
+    setModalMessage(
+      "Unable to connect. Check your internet connection and try again."
+    );
+  });
+
   console.log(formData);
 };
 
 const CreatePost = withAxios((props) => {
   const [images, setImages] = useState([]);
+  const [modalMessage, setModalMessage] = useState("");
+  const selfRef = useRef(null);
+
+  useEffect(() => {
+    if (props.files.length > 0) {
+      document.body.style.overflowY = "hidden";
+    } else {
+      document.body.style.overflowY = "auto";
+    }
+  }, [props.files.length]);
 
   useEffect(() => {
     const readPromiseArray = [];
@@ -63,11 +128,28 @@ const CreatePost = withAxios((props) => {
 
   return (
     <>
+      <Modal
+        options={[
+          {
+            text: "OK",
+            type: "primary",
+            action: () => {
+              setModalMessage("");
+            },
+          },
+        ]}
+        title="Could not create post"
+        message={modalMessage}
+        show={modalMessage}
+        onClose={() => {
+          setModalMessage("");
+        }}
+      />
       <div
-        className={images.length !== 0 ? "backdrop" : ""}
+        className={props.files.length > 0 ? "backdrop" : ""}
         onClick={props.onClose}
       />
-      <div className="CreatePost">
+      <div ref={selfRef} className="CreatePost">
         {props.files.length !== 0 ? (
           <SelectImage
             images={images}
@@ -79,7 +161,15 @@ const CreatePost = withAxios((props) => {
                   orderedImages[imageOrder[i]] = images[i];
                 }
               }
-              uploadPost(props.axios, orderedImages, description);
+              uploadPost(
+                props.axios,
+                orderedImages,
+                description,
+                setModalMessage,
+                props.onUploadProgressChange,
+                props.onProcessProgressChange,
+                selfRef
+              );
               props.onClose();
             }}
           />

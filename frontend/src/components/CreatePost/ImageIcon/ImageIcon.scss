@@ -3,12 +3,15 @@
   opacity: 1;
   cursor: pointer;
   position: relative;
+  // border:1px solid red;
+  width: 33%;
   &::before {
     content: "";
     display: block;
     padding-bottom: 100%;
   }
   img {
+    // display: none;
     object-fit: cover;
     position: absolute;
     height: 100%;

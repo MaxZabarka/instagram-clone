@@ -1,9 +1,76 @@
+.Modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  z-index: 5;
+  width: 18rem;
+  border-radius: 12px;
+  animation: popIn 0.1s linear;
+
+  .content {
+      margin: 0 2rem;
+      text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    h1 {
+      font-size: 1.3rem;
+      margin-top: 1rem;
+      margin-bottom: 0;
+    }
+    p {
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    list-style-type: none;
+    li {
+      font-size: 0.9rem;
+      padding: 1rem 0;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+    }
+    li:active {
+        background: rgba(0,0,0,0.1);
+    }
+    li.danger {
+      color: red;
+      font-weight: 700;
+    }
+    li.primary {
+      font-weight: 700;
+      color: #008cff;
+    }
+    li:only-child {
+      border-top: 1px solid #dbdbdb;
+    }
+    li:not(:nth-last-of-type(1)) {
+      border-bottom: 1px solid #dbdbdb;
+    }
+  }
+}
 .Backdrop {
-    background:black;
-    opacity: 0.7;
-    width:100vw;
-    height:100vh;
-    position: fixed;
-    top:0;
-    z-index: 1;
+  background: black;
+  opacity: 0.7;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  z-index: 3;
+}
+@keyframes popIn {
+  0% {
+    transform: translate(-50%, -50%) scale(1.25);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
 }

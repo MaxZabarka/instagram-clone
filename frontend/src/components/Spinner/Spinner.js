@@ -1,11 +1,11 @@
 import React from 'react';
 import "./Spinner.scss"
+import spinnerImage from "./spinner.png"
 
 const Spinner = () => {
-    console.log("SPINNERRR!")
     return (
         <div className="Spinner">
-            
+            <img src={spinnerImage} alt="loading spinner"/>
         </div>
     );
 };

@@ -5,8 +5,8 @@ import "./Feed.scss";
 const Feed = (props) => {
   return (
     <div className="Feed">
-      {props.posts.map((post) => {
-        return <FeedPost {...post}/>;
+      {props.posts.map((post, index) => {
+        return <FeedPost key={index} {...post}/>;
       })}
     </div>
   );

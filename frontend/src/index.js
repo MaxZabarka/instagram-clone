@@ -16,3 +16,4 @@ ReactDOM.render(
 //tags
 //add date to post
 //suggestions
+//10 images limit

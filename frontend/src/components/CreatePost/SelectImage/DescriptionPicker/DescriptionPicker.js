@@ -11,7 +11,7 @@ const DescriptionPicker = (props) => {
     <div className="DescriptionPicker">
       <div className="input">
         <div className="avatar">
-          <Avatar imageUrl={user.avatarUrl} size="40rem" />
+          <Avatar imageUrl={localStorage.getItem("avatarUrl")} size="40rem" />
         </div>
         <textarea
         maxLength="2200"
