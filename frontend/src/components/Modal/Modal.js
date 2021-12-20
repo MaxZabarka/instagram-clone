@@ -1,6 +1,5 @@
-import React from "react";
+import React, {useEffect} from "react";
 import ReactDOM from "react-dom";
-import { useEffect } from "react/cjs/react.development";
 import "./Modal.scss";
 
 const Modal = (props) => {

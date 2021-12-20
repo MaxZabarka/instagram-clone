@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Input from "../components/Input/Input";
 import { withAxios } from "react-axios";
 import { useHistory } from "react-router-dom";
@@ -23,8 +23,9 @@ const Login = withAxios((props) => {
                 localStorage.setItem(key, response.data[key]);
               }
               history.push("/");
-            }).catch((error) => {
-              alert(error)
+            })
+            .catch((error) => {
+              alert(error);
             });
         }}
       >

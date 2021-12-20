@@ -1,0 +1,35 @@
+.Comment {
+  margin: 1rem 1rem 0 0.4rem;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  .comment-inner {
+    p {
+      margin: 0;
+    }
+    flex-direction: column;
+    flex: 1;
+    display: flex;
+    .comment-content {
+      a, p {
+        display: inline;
+      }
+
+      margin-bottom: 0.5rem;
+    }
+    .comment-meta {
+      display: flex;
+      p {
+        opacity: 0.5;
+        margin-right: 0.7rem;
+      }
+      .likes {
+        font-weight: bold;
+      }
+    }
+  }
+  img.Icon {
+    transform: translateY(0.2rem);
+    align-self: flex-start;
+  }
+}

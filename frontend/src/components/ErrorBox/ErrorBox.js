@@ -6,9 +6,9 @@ const ErrorBox = (props) => {
   return (
     <div className="ErrorBox">
       <Box>
-        <h1>Something went wrong!</h1>
+        <h1>{props.errorTitle || "Something went wrong!"}</h1>
         <p>{props.errorMessage}</p>
-        <button onClick={props.retry}>Try again</button>
+        {props.retry ? <button onClick={props.retry}>Try again</button> : null}
       </Box>
     </div>
   );

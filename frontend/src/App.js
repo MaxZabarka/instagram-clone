@@ -1,14 +1,18 @@
 import { useRef, useState, useEffect } from "react";
 import "./App.css";
+import "./Page.scss"
 import CreatePost from "./components/CreatePost/CreatePost";
 import Navbar from "./components/Navigation/Navbar/Navbar";
 import Home from "./pages/Home";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { AnimatedSwitch } from "react-router-transition";
+
 import Login from "./pages/Login";
 import Modal from "./components/Modal/Modal";
-import "./normalize.css"
-require('dotenv').config();
-console.log(`process.env`, process.env)
+import "./normalize.css";
+import PostPage from "./pages/PostPage";
+require("dotenv").config();
+console.log(`process.env`, process.env);
 
 function App() {
   const [files, setFiles] = useState([]);
@@ -48,7 +52,12 @@ function App() {
           title="Could not create post"
           message={modalMessage}
         />
-        <Switch>
+        <AnimatedSwitch
+          atEnter={{ opacity: 0 }}
+          atLeave={{ opacity: 0 }}
+          atActive={{ opacity: 1 }}
+          runOnMount={true}
+        >
           <Route exact path="/">
             <Navbar
               onCreatePost={() => {
@@ -61,10 +70,24 @@ function App() {
               processProgress={processProgress}
             />
           </Route>
+          <Route
+            path="/posts/:postId"
+            render={(props) => (
+              <>
+                <Navbar
+                  onCreatePost={() => {
+                    inputRef.current.click();
+                  }}
+                />
+                <PostPage {...props} />
+              </>
+            )}
+          />
+
           <Route path="/login">
             <Login />
           </Route>
-        </Switch>
+        </AnimatedSwitch>
 
         {files ? (
           <CreatePost

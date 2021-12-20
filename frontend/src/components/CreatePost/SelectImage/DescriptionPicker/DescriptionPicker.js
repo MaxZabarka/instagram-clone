@@ -20,7 +20,6 @@ const DescriptionPicker = (props) => {
           onChange={() => {
             inputRef.current.style.height = ""; /* Reset the height*/
             inputRef.current.style.height = inputRef.current.scrollHeight + "px";
-            props.onDescriptionChange(inputRef.current.value)
         }}
         />
         <img className="preview" src={props.previewImage} alt=""/>

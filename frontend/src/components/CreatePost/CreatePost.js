@@ -61,6 +61,7 @@ const uploadPost = (
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
       })
       .catch((error) => {
+        
         if (error.response) {
           setModalMessage(error.response.data.errorMessage);
         } else {

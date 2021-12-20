@@ -1,7 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Avatar from "../../Avatar/Avatar";
 import Icon from "../../Icon/Icon";
 import "./Navbar.scss";
+
 
 const Navbar = (props) => {
   return (
@@ -9,7 +11,9 @@ const Navbar = (props) => {
       <div className="Navbar">
         <div className="wrapper">
           <div className="brand">
-            <h1>Maxgram</h1>
+          <Link to="/"><h1>Maxgram</h1></Link>
+
+            
           </div>
           {/* <div className="search">
                     <input/>

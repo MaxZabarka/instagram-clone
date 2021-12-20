@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Feed from "../components/Feed/Feed";
 import { Get } from "react-axios";
 import { useHistory } from "react-router";
@@ -23,7 +23,7 @@ const Home = (props) => {
   }
 
   return (
-    <div>
+    <div className="Page">
       {props.uploadProgress !== null && (
         <PostProgress
           image={props.currentProgressImage}
