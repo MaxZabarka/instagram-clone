@@ -15,6 +15,7 @@ import { useHistory } from "react-router-dom";
 import Comment from "./Comment/Comment";
 import { Get } from "react-axios";
 import Spinner from "../Spinner/Spinner";
+import formatDate from "../../util/image-processing/formatDate";
 
 const FeedPost = (props) => {
   const history = useHistory();
@@ -28,8 +29,10 @@ const FeedPost = (props) => {
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [activePost, setActivePost] = useState(0);
 
+  const [likesAmount, setLikesAmount] = useState(props.likesAmount);
   const [liked, setLiked] = useState(props.userLiked);
-  const [firstLike, setFirstLike] = useState(true)
+
+  const [firstLike, setFirstLike] = useState(true);
 
   const [createdComments, setCreatedComments] = useState([]);
 
@@ -227,8 +230,15 @@ const FeedPost = (props) => {
                 filled={liked}
                 onClick={() => {
                   const path = liked ? "/unlike/" : "/like/";
+
+                  if (liked) {
+                    setLikesAmount(likesAmount - 1);
+                  } else {
+                    setLikesAmount(likesAmount + 1);
+                  }
+
                   setLiked(!liked);
-                  setFirstLike(false)
+                  setFirstLike(false);
                   axios
                     .post(
                       process.env.REACT_APP_API_URL + path + props._id,
@@ -273,7 +283,9 @@ const FeedPost = (props) => {
             </div>
           </div>
           <div className="post-footer-likes">
-            <p>123213 likes</p>
+            <p>
+              {likesAmount} like{likesAmount === 1 ? "" : "s"}
+            </p>
           </div>
           {props.caption ? (
             <div className="post-footer-caption">
@@ -297,7 +309,7 @@ const FeedPost = (props) => {
             </div>
           ) : null}
           <div className="post-footer-date">
-            <p>6 Hours Ago</p>
+            <p>{formatDate(props.dateAdded, true)}</p>
           </div>
           {props.fullPage ? (
             <>
@@ -387,7 +399,7 @@ const FeedPost = (props) => {
                       return <Spinner />;
                     } else if (response !== null) {
                       console.log(`response.data`, response.data);
-                      if (response.data.length === 0) {
+                      if (response.data.length === 0 && createdComments.length === 0) {
                         return (
                           <div className="no-comments">
                             <h1>No Comments Yet</h1>
