@@ -6,6 +6,8 @@ import cropImage from "../../util/image-processing/cropImage";
 import dataURItoBlob from "../../util/image-processing/dataURItoBlob";
 import io from "socket.io-client";
 import Modal from "../Modal/Modal";
+import { useHistory } from "react-router-dom";
+
 
 const readImage = (file) => {
   return new Promise((resolve, reject) => {
@@ -104,6 +106,7 @@ const uploadPost = (
 };
 
 const CreatePost = withAxios((props) => {
+  const history = useHistory()
   const [images, setImages] = useState([]);
   const [modalMessage, setModalMessage] = useState("");
   const selfRef = useRef(null);
@@ -162,6 +165,7 @@ const CreatePost = withAxios((props) => {
                   orderedImages[imageOrder[i]] = images[i];
                 }
               }
+              history.push("/")
               uploadPost(
                 props.axios,
                 orderedImages,

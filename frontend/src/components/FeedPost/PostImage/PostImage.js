@@ -10,6 +10,7 @@ const PostImage = (props) => {
           "url(" + process.env.REACT_APP_API_URL + "/" + props.imageUrl + ")",
       }}
     >
+      <button onClick={props.onClick}/>
       <img
         onLoad={props.onLoad}
         src={process.env.REACT_APP_API_URL + "/" + props.imageUrl}

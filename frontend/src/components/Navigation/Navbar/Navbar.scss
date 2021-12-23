@@ -9,12 +9,15 @@
   justify-content: center;
   z-index: 2;
   .wrapper {
+    position: relative;
     display: flex;
     justify-content: space-between;
     width: 100%;
     max-width: 38rem;
-    .brand, .actions, .search {
-        flex:1;
+    .brand,
+    .actions,
+    .search {
+      flex: 1;
     }
     .brand {
       @media only screen and (max-width: 40rem) {
@@ -29,18 +32,70 @@
       }
     }
     .search {
-        visibility: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      visibility: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .actions {
-        img {
-            margin: 0 0.6rem;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      img {
+        vertical-align: bottom;
+        margin: 0 0.6rem;
+      }
+      .dropdown {
+        position: absolute;
+        // top: 0;
+        bottom: 0;
+        right: 0;
+        transform: translateY(calc(100% - 0.3rem));
+        border-radius: 5px;
+        box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+        background: #fff;
+        // border: 1px solid red;
+        ul {
+          padding: 0;
+          margin: 0;
+          list-style: none;
+          display: flex;
+          flex-direction: column;
         }
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
+        li {
+          display: flex;
+          padding: 0;
+          margin: 0;
+          img {
+            margin: 0;
+            margin-right: 0.5rem;
+          }
+          a,
+          button {
+            padding: 0.8rem 7rem 0.8rem 1rem;
+            display: flex;
+            align-items: center;
+            // padding: 0.8rem 6rem 0.8rem 3rem;
+            text-align: left;
+            font-size: 0.875rem;
+          }
+          button {
+            width: 100%;
+            outline: none;
+            border:none;
+            cursor: pointer;
+            background: none;
+          }
+        }
+
+        li:hover {
+          background: #f1f1f1;
+        }
+
+        li:last-of-type {
+          border-top: 1px solid #dbdbdb;
+        }
+      }
     }
   }
 }

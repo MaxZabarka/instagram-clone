@@ -29,6 +29,8 @@ const FeedPost = (props) => {
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [activePost, setActivePost] = useState(0);
 
+  const lastClick = useRef(performance.now());
+
   const [likesAmount, setLikesAmount] = useState(props.likesAmount);
   const [liked, setLiked] = useState(props.userLiked);
 
@@ -51,6 +53,56 @@ const FeedPost = (props) => {
   const onImageLoadHandler = () => {
     setImagesLoaded(imagesLoaded + 1);
   };
+
+  const onPostClickHandler = (e) => {
+    const currentTime = performance.now();
+    const timeInBetweenClicks = currentTime - lastClick.current;
+    if (timeInBetweenClicks < 500) {
+      console.log("double click");
+      onLikeHandler(true);
+      lastClick.current = 0;
+    } else {
+      lastClick.current = currentTime;
+    }
+  };
+
+  const onLikeHandler = (forceLike) => {
+    let path = liked ? "/unlike/" : "/like/";
+
+    if (forceLike === true) {
+      path = "/like/";
+      if (!liked) {
+        setLikesAmount(likesAmount + 1);
+      }
+      setLiked(true);
+
+    } else {
+      if (liked) {
+        setLikesAmount(likesAmount - 1);
+      } else {
+        setLikesAmount(likesAmount + 1);
+      }
+
+      setLiked(!liked);
+      setFirstLike(false);
+    }
+
+    axios
+      .post(process.env.REACT_APP_API_URL + path + props._id, null, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .catch((error) => {
+        setModalTitle("Could not like post");
+        if (error.response) {
+          setModalMessage(error.response.data.errorMessage);
+        } else {
+          setModalMessage("Something went wrong");
+        }
+      });
+  };
+
   console.log(`activePost`, activePost);
   const options = [
     { text: "Unfollow", type: "danger" },
@@ -84,7 +136,7 @@ const FeedPost = (props) => {
       },
     });
   }
-  if (localStorage.getItem("username") === props.creator) {
+  if (localStorage.getItem("username") === props.creator.username) {
     options.unshift({
       text: "Delete",
       type: "danger",
@@ -118,6 +170,7 @@ const FeedPost = (props) => {
     <>
       {props.imageUrls.length !== 1 ? (
         <Swiper
+          onClick={onPostClickHandler}
           observer={true}
           observeParents={true}
           onSlideChange={() => {
@@ -152,13 +205,20 @@ const FeedPost = (props) => {
           {props.imageUrls.map((imageUrl) => {
             return (
               <SwiperSlide>
-                <PostImage imageUrl={imageUrl} onLoad={onImageLoadHandler} />
+                <PostImage
+                  imageUrl={imageUrl}
+                  onLoad={onImageLoadHandler}
+                />
               </SwiperSlide>
             );
           })}
         </Swiper>
       ) : (
-        <PostImage imageUrl={props.imageUrls[0]} onLoad={onImageLoadHandler} />
+        <PostImage
+          onClick={onPostClickHandler}
+          imageUrl={props.imageUrls[0]}
+          onLoad={onImageLoadHandler}
+        />
       )}
     </>
   );
@@ -206,9 +266,9 @@ const FeedPost = (props) => {
         <div className="post-header">
           <div className="post-header-creator">
             <Avatar size="35rem" imageUrl={props.avatarUrl} />
-            <Link to={"/users/" + props.creator}>
+            <Link to={"/users/" + props.creator.username}>
               {" "}
-              <h2>{props.creator}</h2>
+              <h2>{props.creator.username}</h2>
             </Link>
           </div>
           <div
@@ -228,37 +288,7 @@ const FeedPost = (props) => {
                 className={liked && !firstLike ? "like-animation" : ""}
                 type="like"
                 filled={liked}
-                onClick={() => {
-                  const path = liked ? "/unlike/" : "/like/";
-
-                  if (liked) {
-                    setLikesAmount(likesAmount - 1);
-                  } else {
-                    setLikesAmount(likesAmount + 1);
-                  }
-
-                  setLiked(!liked);
-                  setFirstLike(false);
-                  axios
-                    .post(
-                      process.env.REACT_APP_API_URL + path + props._id,
-                      null,
-                      {
-                        headers: {
-                          Authorization:
-                            "Bearer " + localStorage.getItem("token"),
-                        },
-                      }
-                    )
-                    .catch((error) => {
-                      setModalTitle("Could not like post");
-                      if (error.response) {
-                        setModalMessage(error.response.data.errorMessage);
-                      } else {
-                        setModalMessage("Something went wrong");
-                      }
-                    });
-                }}
+                onClick={onLikeHandler}
               />
               <Link to={"/posts/" + props._id}>
                 <Icon
@@ -289,7 +319,7 @@ const FeedPost = (props) => {
           </div>
           {props.caption ? (
             <div className="post-footer-caption">
-              <Link to={"/users/" + props.creator}>{props.creator}</Link>
+              <Link to={"/users/" + props.creator.username}>{props.creator.username}</Link>
               &nbsp;
               {captionExpanded ? (
                 <p>{props.caption}</p>
@@ -399,7 +429,10 @@ const FeedPost = (props) => {
                       return <Spinner />;
                     } else if (response !== null) {
                       console.log(`response.data`, response.data);
-                      if (response.data.length === 0 && createdComments.length === 0) {
+                      if (
+                        response.data.length === 0 &&
+                        createdComments.length === 0
+                      ) {
                         return (
                           <div className="no-comments">
                             <h1>No Comments Yet</h1>

@@ -1,11 +1,13 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import "./Avatar.scss";
 
-const Avatar = (props) => {
+const Avatar = forwardRef((props, ref) => {
   const size = props.size || "25rem";
 
   return (
     <img
+      ref={ref}
+      onClick={props.onClick}
       src={props.imageUrl}
       alt=""
       width={size}
@@ -13,6 +15,6 @@ const Avatar = (props) => {
       className="Avatar"
     />
   );
-};
+});
 
 export default Avatar;

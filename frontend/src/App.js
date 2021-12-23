@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import "./App.css";
-import "./Page.scss"
+import "./Page.scss";
 import CreatePost from "./components/CreatePost/CreatePost";
 import Navbar from "./components/Navigation/Navbar/Navbar";
 import Home from "./pages/Home";
@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Modal from "./components/Modal/Modal";
 import "./normalize.css";
 import PostPage from "./pages/PostPage";
+import User from "./pages/User";
 require("dotenv").config();
 console.log(`process.env`, process.env);
 
@@ -60,6 +61,7 @@ function App() {
         >
           <Route exact path="/">
             <Navbar
+              page="home"
               onCreatePost={() => {
                 inputRef.current.click();
               }}
@@ -80,6 +82,19 @@ function App() {
                   }}
                 />
                 <PostPage {...props} />
+              </>
+            )}
+          />
+          <Route
+            path="/users/:username"
+            render={(props) => (
+              <>
+                <Navbar
+                  onCreatePost={() => {
+                    inputRef.current.click();
+                  }}
+                />
+                <User {...props} />
               </>
             )}
           />

@@ -67,6 +67,7 @@
     margin-bottom: 1rem;
 
     .post-footer-actions {
+      user-select: none;
       margin: 0.3rem 0.5rem;
       display: flex;
       justify-content: space-around;
@@ -109,6 +110,7 @@
       }
     }
     .post-footer-date {
+
       margin: 0.3rem 1rem;
       opacity: 0.5;
       text-transform: uppercase;
