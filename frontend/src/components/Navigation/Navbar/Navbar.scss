@@ -46,6 +46,9 @@
         margin: 0 0.6rem;
       }
       .dropdown {
+        opacity: 0;
+        transform-origin: top center;
+        animation: dropdown-animation 0.5s ease forwards;
         position: absolute;
         // top: 0;
         bottom: 0;
@@ -82,7 +85,7 @@
           button {
             width: 100%;
             outline: none;
-            border:none;
+            border: none;
             cursor: pointer;
             background: none;
           }
@@ -97,5 +100,15 @@
         }
       }
     }
+  }
+}
+@keyframes dropdown-animation {
+  0% {
+    transform: translateY(calc(100% - 2rem));
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(calc(100% - 0.3rem));
+    opacity: 1;
   }
 }

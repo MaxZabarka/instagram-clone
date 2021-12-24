@@ -56,7 +56,7 @@ const User = (props) => {
   if (error) {
     main = <ErrorBox errorTitle={error.title} errorMessage={error.message} />;
   } else if (response) {
-    console.log(`response`, response)
+    console.log(`response`, response);
     main = (
       <>
         <div className="User">
@@ -66,21 +66,51 @@ const User = (props) => {
           <div className="right">
             <div className="username">
               <h1>{username}</h1>
-              {response.following ? (
+              {username ===
+              localStorage.getItem("username") ? null : response.following ? (
                 <button
+                  className="unfollow"
                   onClick={() => {
-                    setResponse({ ...response, following: false });
+                    axios
+                      .post(
+                        process.env.REACT_APP_API_URL +
+                          "/unfollow/" +
+                          response._id,
+                        null,
+                        {
+                          headers: {
+                            Authorization:
+                              "Bearer " + localStorage.getItem("token"),
+                          },
+                        }
+                      )
+                      .then(() => {
+                        setResponse({ ...response, following: false });
+                      });
                   }}
-                  className="follow"
                 >
                   Unfollow
                 </button>
               ) : (
                 <button
                   onClick={() => {
-                    setResponse({ ...response, following: true });
+                    axios
+                      .post(
+                        process.env.REACT_APP_API_URL +
+                          "/follow/" +
+                          response._id,
+                        null,
+                        {
+                          headers: {
+                            Authorization:
+                              "Bearer " + localStorage.getItem("token"),
+                          },
+                        }
+                      )
+                      .then(() => {
+                        setResponse({ ...response, following: true });
+                      });
                   }}
-                  className="follow"
                 >
                   Follow
                 </button>
@@ -108,92 +138,8 @@ const User = (props) => {
     );
   } else {
     main = <Spinner />;
-
   }
-  return (
-    <div className="Page">
-      {main}
-      {/* <Get
-        url={}
-        config={}
-      >
-        {(error, response, isLoading, makeRequest, axios) => {
-          console.log(`error, response, isLoading`, error, response, isLoading);
-
-          if (error) {
-            let errorMessage;
-            if (response) {
-              if (response.status === 404) {
-                return (
-                  
-                );
-              }
-              errorMessage = response.errorMessage;
-            } else {
-              errorMessage = error.message;
-            }
-            return <ErrorBox errorMessage={errorMessage} retry={makeRequest} />;
-          } else if (isLoading || !response) {
-            return <Spinner />;
-          } else if (response !== null) {
-            setFollowing(response.following);
-            return (
-              <>
-                <div className="User">
-                  <div className="avatar-wrapper">
-                    <Avatar
-                      size="100%"
-                      imageUrl={localStorage.getItem("avatarUrl")}
-                    />
-                  </div>
-                  <div className="right">
-                    <div className="username">
-                      <h1>{username}</h1>
-                      {following ? (
-                        <button
-                          onClick={() => {
-                            setFollowing(false);
-                          }}
-                          className="follow"
-                        >
-                          Unfollow
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            setFollowing(true);
-                          }}
-                          className="follow"
-                        >
-                          Follow
-                        </button>
-                      )}
-                    </div>
-                    <div className="stats">
-                      <div>
-                        <h2>{response.posts.length}</h2>
-                        <p>posts</p>
-                      </div>
-                      <div>
-                        <h2>{response.followersAmount}</h2>
-                        <p>followers</p>
-                      </div>
-                      <div>
-                        <h2>{response.followingAmount}</h2>
-                        <p>following</p>
-                      </div>
-                    </div>
-                    <p className="bio">{response.bio}</p>
-                  </div>
-                </div>
-                <PostGrid posts={response.posts} />
-              </>
-            );
-          }
-        }}
-      </Get> */}
-    </div>
-  );
+  return <div className="Page">{main}</div>;
 };
 
 export default User;

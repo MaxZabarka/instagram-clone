@@ -5,7 +5,6 @@ import Avatar from "../../Avatar/Avatar";
 import Icon from "../../Icon/Icon";
 import "./Comment.scss";
 
-
 const Comment = (props) => {
   console.log(` asdsd props`, props);
   return (

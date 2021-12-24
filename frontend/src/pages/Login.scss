@@ -1,0 +1,65 @@
+.Login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 80vh;
+  max-width: 30rem;
+  margin: auto;
+  .login {
+    h1 {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    form {
+      margin: clamp(0px, 10vw, 5rem);
+      margin-top: 1rem;
+      margin-bottom: 3rem;
+      label {
+        display: none;
+      }
+      input,
+      button {
+        margin-top: 0.7rem;
+        padding: 0.5rem 1rem;
+        box-sizing: border-box;
+        display: inline-block;
+        width: 100%;
+      }
+      input {
+        border-radius: 3px;
+        border: 1px solid #dbdbdb;
+        outline: none;
+        background: #fafafa;
+      }
+      button {
+        margin-top: 2rem;
+        font-weight: bold;
+        font-size: 0.875rem;
+        cursor: pointer;
+        background: #008cff;
+        color: white;
+        border: none;
+        border-radius: 3px;
+      }
+    }
+    p {
+      margin-top: 2rem;
+      color:#ed4957;
+      text-align: center;
+    }
+  }
+  .other-box {
+    @media only screen and (min-width: 38rem) {
+      margin-top: 1rem;
+      padding: 1rem;
+    }
+    margin-top: 0;
+    padding: 1rem;
+    padding-top: 0;
+    text-align: center;
+    a {
+      font-weight: bolder;
+      color: #008cff;
+    }
+  }
+}

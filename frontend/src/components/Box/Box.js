@@ -3,7 +3,7 @@ import "./Box.scss"
 
 const Box = (props) => {
     return (
-        <div className="Box">
+        <div className={"Box "+props.className}>
             {props.children}
         </div>
     );

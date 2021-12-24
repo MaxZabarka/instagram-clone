@@ -75,7 +75,6 @@ const FeedPost = (props) => {
         setLikesAmount(likesAmount + 1);
       }
       setLiked(true);
-
     } else {
       if (liked) {
         setLikesAmount(likesAmount - 1);
@@ -105,7 +104,6 @@ const FeedPost = (props) => {
 
   console.log(`activePost`, activePost);
   const options = [
-    { text: "Unfollow", type: "danger" },
     {
       text: "Go to post",
       action: () => {
@@ -164,6 +162,26 @@ const FeedPost = (props) => {
           });
       },
     });
+  } else {
+    options.unshift({
+      text: "Unfollow",
+      type: "danger",
+      action: () => {
+        axios
+          .post(
+            process.env.REACT_APP_API_URL + "/unfollow/" + props.creator._id,
+            null,
+            {
+              headers: {
+                Authorization: "Bearer " + localStorage.getItem("token"),
+              },
+            }
+          )
+          .then(() => {
+            setShowOptions(false);
+          });
+      },
+    });
   }
 
   const postMain = (
@@ -205,10 +223,7 @@ const FeedPost = (props) => {
           {props.imageUrls.map((imageUrl) => {
             return (
               <SwiperSlide>
-                <PostImage
-                  imageUrl={imageUrl}
-                  onLoad={onImageLoadHandler}
-                />
+                <PostImage imageUrl={imageUrl} onLoad={onImageLoadHandler} />
               </SwiperSlide>
             );
           })}
@@ -265,7 +280,9 @@ const FeedPost = (props) => {
       <Box>
         <div className="post-header">
           <div className="post-header-creator">
-            <Avatar size="35rem" imageUrl={props.avatarUrl} />
+            <Link to={"/users/" + props.creator.username}>
+              <Avatar size="35rem" imageUrl={props.avatarUrl} />
+            </Link>
             <Link to={"/users/" + props.creator.username}>
               {" "}
               <h2>{props.creator.username}</h2>
@@ -319,7 +336,9 @@ const FeedPost = (props) => {
           </div>
           {props.caption ? (
             <div className="post-footer-caption">
-              <Link to={"/users/" + props.creator.username}>{props.creator.username}</Link>
+              <Link to={"/users/" + props.creator.username}>
+                {props.creator.username}
+              </Link>
               &nbsp;
               {captionExpanded ? (
                 <p>{props.caption}</p>
