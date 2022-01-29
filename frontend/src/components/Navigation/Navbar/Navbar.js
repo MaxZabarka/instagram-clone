@@ -9,7 +9,7 @@ const Navbar = (props) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const avatarRef = useRef(null);
-  const history = useHistory()
+  const history = useHistory();
   window.onclick = (e) => {
     console.log("window click");
     // avatar icon clicked or child of dropdown clicked
@@ -36,15 +36,29 @@ const Navbar = (props) => {
               <Icon type="home" filled={props.page === "home"} />
             </Link>
             <Icon type="send" />
-            <Icon type="compass" />
-            <Icon type="add" onClick={props.onCreatePost} />
-            <Avatar
-              ref={avatarRef}
+            <Link to="/explore">
+              <Icon type="compass" filled={props.page === "explore"} />
+            </Link>
+            <Icon
+              type="add"
               onClick={() => {
-                setShowDropdown(true);
+                if (localStorage.getItem("token")) {
+                  props.onCreatePost();
+                } else {
+                  history.push("/login");
+                }
               }}
-              imageUrl={localStorage.getItem("avatarUrl")}
             />
+            {localStorage.getItem("token") ? (
+              <Avatar
+                ref={avatarRef}
+                onClick={() => {
+                  setShowDropdown(true);
+                }}
+                imageUrl={localStorage.getItem("avatarUrl")}
+              />
+            ) : null}
+
             {showDropdown ? (
               <div ref={dropdownRef} className="dropdown">
                 <ul>
@@ -64,7 +78,7 @@ const Navbar = (props) => {
                     <button
                       onClick={() => {
                         localStorage.clear();
-                        history.push("/login")
+                        history.push("/login");
                       }}
                     >
                       Log Out

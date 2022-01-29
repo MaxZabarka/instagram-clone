@@ -105,13 +105,6 @@ const FeedPost = (props) => {
   console.log(`activePost`, activePost);
   const options = [
     {
-      text: "Go to post",
-      action: () => {
-        history.push("/posts/" + props._id);
-        setShowOptions(false);
-      },
-    },
-    {
       text: "Copy link",
       action: () => {
         navigator.clipboard.writeText(postUrl);
@@ -131,6 +124,15 @@ const FeedPost = (props) => {
       action: () => {
         setShowOptions(false);
         navigator.share(postUrl);
+      },
+    });
+  }
+  if (window.location.pathname.split("/")[1] !== "posts") {
+    options.unshift({
+      text: "Go to post",
+      action: () => {
+        history.push("/posts/" + props._id);
+        setShowOptions(false);
       },
     });
   }
@@ -183,6 +185,7 @@ const FeedPost = (props) => {
       },
     });
   }
+
 
   const postMain = (
     <>

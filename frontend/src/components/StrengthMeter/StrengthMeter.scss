@@ -1,0 +1,17 @@
+.StrengthMeter {
+  border: 1px solid #dbdbdb;
+  margin-top: 0.8rem;
+  padding: 1rem;
+  padding-top:0.5rem;
+  background: #fafafa;
+  p {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    margin: 0.4rem 0;
+  }
+  .bar {
+    border-radius: 5px;
+    transition: 0.3s ease all;
+    height: 0.5rem;
+  }
+}

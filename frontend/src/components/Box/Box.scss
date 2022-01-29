@@ -1,6 +1,8 @@
 .Box {
-    @media only screen and (min-width: 38rem) {
-        border: 1px solid #dbdbdb;
-        border-radius: 5px;
-      }
+  background: #fafafa;
+  @media only screen and (min-width: 38rem) {
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    background: white;
+  }
 }

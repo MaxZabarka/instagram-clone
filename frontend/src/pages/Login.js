@@ -10,8 +10,8 @@ const Login = withAxios((props) => {
   const [error, setError] = useState("");
 
   return (
-    <div className="Login">
-      <Box className="login">
+    <div className="FormPage">
+      <Box className="form">
         <h1>Maxgram</h1>
         <form
           onSubmit={(event) => {
@@ -48,7 +48,7 @@ const Login = withAxios((props) => {
           <label for="password">password</label>
           <input name="password" placeholder="Password" type="password" />
           <button type="submit">Login</button>
-          {error ? <p>{error}</p> : null}
+          {error ? <p className="error">{error}</p> : null}
         </form>
       </Box>
       <Box className="other-box">

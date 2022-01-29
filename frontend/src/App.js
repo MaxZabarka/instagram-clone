@@ -12,6 +12,7 @@ import Modal from "./components/Modal/Modal";
 import "./normalize.css";
 import PostPage from "./pages/PostPage";
 import User from "./pages/User";
+import Register from "./pages/Register";
 require("dotenv").config();
 console.log(`process.env`, process.env);
 
@@ -72,6 +73,15 @@ function App() {
               processProgress={processProgress}
             />
           </Route>
+          <Route exact path="/explore">
+            <Navbar
+              page="explore"
+              onCreatePost={() => {
+                inputRef.current.click();
+              }}
+            />
+            <h1>Exlores</h1>
+          </Route>
           <Route
             path="/posts/:postId"
             render={(props) => (
@@ -101,6 +111,9 @@ function App() {
 
           <Route path="/login">
             <Login />
+          </Route>
+          <Route path="/register">
+            <Register />
           </Route>
         </AnimatedSwitch>
 
