@@ -1,8 +1,8 @@
 const sharp = require("sharp");
 const { v4: uuid } = require("uuid");
 const fs = require("fs");
+const { ObjectId } = require("mongodb");
 
-const DUMMY_DATA = [];
 const MIME_TYPE_MAP = {
   "image/png": "png",
   "image/jpeg": "jpeg",
@@ -18,25 +18,28 @@ const createPost = (req, res, next) => {
   // max width or height 1920px
   // aspect ratio fits
   // under 10 images
+
+  if (req.files.length > 10) {
+    throw new HttpError("Cannot post more than 10 images", 400);
+  }
+
   const imageNames = [];
   let imagesWritten = 0;
   let imagesProcessed = 0;
-
   const imageWritten = (success) => {
     imagesProcessed++;
     if (success) imagesWritten++;
-    console.log(`imagesProcessed`, imagesProcessed);
-    console.log(`imagesWritten`, imagesWritten);
-
     if (imagesProcessed >= req.files.length) {
       if (imagesWritten >= req.files.length) {
-        console.log(imageNames);
         const document = JSON.parse(req.body.document);
-        DUMMY_DATA.push({
+        db.collection("posts").insertOne({
           imageUrls: imageNames,
-          avatarUrl: "https://picsum.photos/200/200",
+          avatarUrl: req.userData.avatarUrl,
           caption: document.description,
-          creator: "test.123.test",
+          creator: ObjectId(req.userData._id),
+          dateAdded: new Date(),
+          likes: [],
+          comments: [],
         });
       } else {
         imageNames.forEach((imagePath) => {
@@ -46,91 +49,210 @@ const createPost = (req, res, next) => {
     }
   };
 
+  const socket = req.ws;
   req.files.forEach((file, index) => {
-    if (!MIME_TYPE_MAP[file.mimetype]) throw new Error("Invalid mimetype");
+    if (!MIME_TYPE_MAP[file.mimetype])
+      throw new HttpError("Invalid mimetype", 400);
     const folder = "uploads/images/";
     const name = uuid() + "." + "jpeg";
     const path = folder + name;
     imageNames.push(path);
-    sharp(file.buffer)
-      .toFormat("jpeg")
-      .jpeg({ quality: 80 })
-      .png({ quality: 1, force: false })
-      .toFile(path)
+
+    const image = sharp(file.buffer);
+
+    image
+      .metadata()
       .then((info) => {
+        const resizeOptions = {};
+
         if (info.width > 1920 || info.height > 1920) {
-          throw new Error(
-            "Image cannot be larger than 1920px on either dimension"
-          );
+          if (info.width >= info.height) {
+            resizeOptions.width = 1920;
+          } else {
+            resizeOptions.height = 1920;
+          }
         }
+        return image.resize(resizeOptions);
+      })
+      .then(() => image.toFormat("jpeg"))
+      .then(() => image.jpeg({ quality: 80 }))
+      .then(() => image.toFile(path))
+      .then((info) => {
         if (info.size > MAX_FILE_SIZE_MB) {
-          throw new Error("Image cannot be larger than 5mb");
+          throw new HttpError("Image cannot be larger than 5mb", 400);
         }
         if (
           info.width / info.height > WIDTH_RATIO ||
           info.height / info.width > HEIGHT_RATIO
         ) {
-          throw new Error("Image must fit aspect ratio");
+          throw new HttpError("Image must fit aspect ratio", 400);
         }
         //send
-        // console.log(index);
+        socket.emit("image_processed", { index });
         imageWritten(true);
       })
       .catch((error) => {
         //send
+        socket.emit("error", {
+          errorMessage: "Something went wrong processing the images.",
+        });
         imageWritten(false);
         console.log(error);
       });
-
-    // Promise.allSettled(promiseArray).then((results) => {
-    //   if (results.some((result) => result.status === "rejected")) {
-    //     imageNames.forEach((imagePath) => {
-    //       console.log(imagePath)
-    //       fs.unlinkSync(imagePath);
-    //     });
-    //   }
-    // });
-    // .then((info) => {
-    //   // console.log(info);
-    //   // console.log(info)
-    // if (info.width > 1920 || info.height > 1920) {
-    //   throw new Error(
-    //     "Image cannot be larger than 1920px on either dimension"
-    //   );
-    // }
-    //   if (info.size > MAX_FILE_SIZE_MB) {
-    //     throw new Error("Image cannot be larger than 5mb");
-    //   }
-    //   if (
-    //     info.width / info.height > WIDTH_RATIO ||
-    //     info.height / info.width > HEIGHT_RATIO
-    //   ) {
-    //     throw new Error("Image must fit aspect ratio");
-    //   }
-    //   //send
-    //   console.log(index);
-    // })
-    // .catch((error) => {
-    //   //delete
-    //   imageNames.forEach(imagePath => {
-    //     console.log(imagePath)
-    //     fs.unlinkSync(imagePath)
-    //   })
-    //   //send
-    //   console.log(error);
-    // });
-    // promiseArray.push(imagePromise)
   });
-
-  //make sure image fits aspect ratio
-
-  res.json({
-    success: 1,
-  });
+  res.sendStatus(200);
 };
 
-const getPosts = (req, res, next) => {
-  res.json(DUMMY_DATA);
+const explorePosts = async (req, res, next) => {
+  try {
+    const result = await (
+      await db.collection("posts").aggregate([
+        {
+          $addFields: {
+            userLiked: {
+              $in: [req.userData._id, "$likes"],
+            },
+            likesAmount: {
+              $size: "$likes",
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "creator",
+            foreignField: "_id",
+            as: "creator",
+          },
+        },
+        {
+          $unwind: "$creator",
+        },
+        { $sort: { dateAdded: -1 } },
+        {
+          $project: {
+            imageUrls: 1,
+            avatarUrl: 1,
+            caption: 1,
+            dateAdded: 1,
+            userLiked: 1,
+            likesAmount: 1,
+            "creator.username": 1,
+          },
+        },
+      ])
+    ).toArray();
+    res.json(result);
+  } catch (e) {
+    return next(e);
+  }
 };
 
-module.exports = { createPost, getPosts };
+const getPosts = async (req, res, next) => {
+  try {
+    const following = (
+      await db.collection("users").findOne({ _id: req.userData._id })
+    ).following;
+    console.log(following);
+    const result = await (
+      await db.collection("posts").aggregate([
+        {
+          $match: {
+            creator: { $in: [...following, req.userData._id] },
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "creator",
+            foreignField: "_id",
+            as: "creator",
+          },
+        },
+        {
+          $unwind: "$creator",
+        },
+        {
+          $addFields: {
+            userLiked: {
+              $in: [req.userData._id, "$likes"],
+            },
+            likesAmount: {
+              $size: "$likes",
+            },
+          },
+        },
+        { $sort: { dateAdded: -1 } },
+        { $project: { comments: 0, likes: 0 } },
+      ])
+    ).toArray();
+    res.json(result);
+  } catch (e) {
+    return next(e);
+  }
+};
+
+const getPost = async (req, res, next) => {
+  try {
+    const result = await (
+      await db.collection("posts").aggregate([
+        { $match: { _id: ObjectId(req.params.id) } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "creator",
+            foreignField: "_id",
+            as: "creator",
+          },
+        },
+        {
+          $unwind: "$creator",
+        },
+        {
+          $addFields: {
+            userLiked: {
+              $in: [req.userData._id, "$likes"],
+            },
+            likesAmount: {
+              $size: "$likes",
+            },
+          },
+        },
+        { $project: { comments: 0 } },
+      ])
+    ).toArray();
+    if (result && result.length) {
+      res.json(result[0]);
+    } else {
+      return next(new HttpError("Post not found", 404));
+    }
+  } catch (e) {
+    if (e.name === "BSONTypeError") {
+      return next(new HttpError("Post not found", 404));
+    }
+    return next(e);
+  }
+};
+
+const deletePost = async (req, res, next) => {
+  let post;
+  try {
+    post = await db
+      .collection("posts")
+      .findOne({ _id: ObjectId(req.params.id) });
+    if (!post) {
+      return next(new HttpError("Post could not be found"), 404);
+    }
+  } catch (e) {
+    return next(new HttpError("Post could not be found"), 404);
+  }
+
+  if (post.creator !== req.userData.username) {
+    return next(new HttpError("You are not allowed to  delete this post"), 403);
+  }
+  await db.collection("posts").deleteOne({ _id: post._id });
+
+  res.sendStatus(200);
+};
+
+module.exports = { createPost, getPosts, explorePosts, deletePost, getPost };

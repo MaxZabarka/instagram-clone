@@ -1,2 +1,3 @@
-/uploads/images
-/node_modules/
+uploads/images/
+node_modules/
+.env

@@ -1,34 +1,71 @@
 const fs = require("fs");
 
+require("./util/http-error");
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const fileUpload = require("./middleware/file-upload");
+require("dotenv").config();
+require("./util/db");
 
-const { createPost, getPosts } = require("./controllers/posts-controller");
+const {
+  createPost,
+  deletePost,
+  getPost,
+  explorePosts,
+  getPosts,
+} = require("./controllers/posts-controller");
+const socketHandler = require("./util/socket-handler");
+const loginController = require("./controllers/login-controller");
+const checkAuth = require("./middleware/check-auth");
+const uploadProgress = require("./middleware/upload-progress");
+const {
+  getComments,
+  postComment,
+} = require("./controllers/comments-controller");
+const { likePost, unlikePost } = require("./controllers/likes-controller");
+const { getUser } = require("./controllers/user-controller");
+const { followUser, unfollowUser } = require("./controllers/follow-controller");
+const { exists } = require("./controllers/register-controller");
 
 const app = express();
 
+app.use(express.json());
+
 app.use(cors());
 
+app.post("/login", loginController);
+app.post("/exists/", exists);
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
+app.use(checkAuth);
+
+app.get("/users/:username", getUser);
+
+app.get("/comments/:id", getComments);
+app.post("/comments/:id", postComment);
+
+app.post("/like/:id", likePost);
+app.post("/unlike/:id", unlikePost);
+
+app.delete("/posts/delete/:id", deletePost);
+app.get("/explore", explorePosts);
 app.get("/posts", getPosts);
 
-app.post("/posts", fileUpload.any("images"), createPost);
+app.get("/posts/:id", getPost);
+app.post("/posts", socketHandler, uploadProgress, fileUpload.any(), createPost);
+
+app.post("/follow/:id", followUser);
+app.post("/unfollow/:id", unfollowUser);
+
+
 
 app.use((req, res, next) => {
-  const error = new Error("Could not find this route");
-  error.code = 404;
-  throw error;
+  throw new HttpError("Couldn't find this page.", 404);
 });
 
 app.use((error, req, res, next) => {
-  if (req.file) {
-    fs.unlink(req.file.paths, (err) => {
-      console.log(err);
-    });
-  }
+  console.log(error);
   if (res.headerSent) {
     return next(error);
   }
@@ -37,5 +74,5 @@ app.use((error, req, res, next) => {
 });
 
 app.listen(5000, () => {
-  console.log("Server running on port 5000");
+  console.log("Listening on port 5000");
 });
