@@ -13,6 +13,7 @@ import "./normalize.css";
 import PostPage from "./pages/PostPage";
 import User from "./pages/User";
 import Register from "./pages/Register";
+import Explore from "./pages/Explore";
 require("dotenv").config();
 console.log(`process.env`, process.env);
 
@@ -80,7 +81,7 @@ function App() {
                 inputRef.current.click();
               }}
             />
-            <h1>Exlores</h1>
+            <Explore/>
           </Route>
           <Route
             path="/posts/:postId"

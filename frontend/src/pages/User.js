@@ -133,7 +133,7 @@ const User = (props) => {
             <p className="bio">{response.bio}</p>
           </div>
         </div>
-        <PostGrid posts={response.posts} />
+        <PostGrid border posts={response.posts} />
       </>
     );
   } else {

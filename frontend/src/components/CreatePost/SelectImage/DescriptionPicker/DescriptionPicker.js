@@ -17,9 +17,10 @@ const DescriptionPicker = (props) => {
         maxLength="2200"
         placeholder="Write a caption..."
           ref={inputRef}
-          onChange={() => {
+          onChange={(e) => {
             inputRef.current.style.height = ""; /* Reset the height*/
             inputRef.current.style.height = inputRef.current.scrollHeight + "px";
+            props.onDescriptionChange(e.target.value)
         }}
         />
         <img className="preview" src={props.previewImage} alt=""/>

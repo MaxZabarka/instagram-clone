@@ -23,10 +23,10 @@ const Comment = (props) => {
         </div>
         <div className="comment-meta">
           <p className="date">{formatDate(props.dateAdded)}</p>
-          <p className="likes">0 likes</p>
+          {/* <p className="likes">0 likes</p> */}
         </div>
       </div>
-      <Icon size="15rem" type="like" />
+      {/* <Icon size="15rem" type="like" /> */}
     </div>
   );
 };

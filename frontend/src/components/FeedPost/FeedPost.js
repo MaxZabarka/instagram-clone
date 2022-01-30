@@ -39,7 +39,16 @@ const FeedPost = (props) => {
   const [createdComments, setCreatedComments] = useState([]);
 
   const [captionExpanded, setCaptionExpanded] = useState(
-    props.caption.length < 100
+    props.caption.length < 101 && props.caption.split("\n").length - 1 < 3
+  );
+  console.log("props.caption", props.caption);
+  // console.log(
+  //   'props.caption.split("\n")',
+  //   props.caption.split("\n").length - 1 < 3
+  // );
+  console.log(
+    'props.caption.length < 100 || props.caption.split("\n").length - 1 < 3',
+    props.caption.length < 100 || props.caption.split("\n").length - 1 < 3
   );
   const [showOptions, setShowOptions] = useState(false);
   const [swiper, setSwiper] = useState(null);
@@ -164,7 +173,7 @@ const FeedPost = (props) => {
           });
       },
     });
-  } else {
+  } else if (window.location.pathname.split("/")[1] !== "posts") {
     options.unshift({
       text: "Unfollow",
       type: "danger",
@@ -185,7 +194,6 @@ const FeedPost = (props) => {
       },
     });
   }
-
 
   const postMain = (
     <>
@@ -270,7 +278,6 @@ const FeedPost = (props) => {
       options={options}
     />
   );
-
   return (
     <div
       className="FeedPost"
@@ -320,7 +327,7 @@ const FeedPost = (props) => {
                   type="comment"
                 />
               </Link>
-              <Icon type="send" />
+              {/* <Icon type="send" /> */}
             </div>
 
             {props.imageUrls.length > 1 ? (
@@ -347,14 +354,19 @@ const FeedPost = (props) => {
                 <p>{props.caption}</p>
               ) : (
                 <>
-                  <p>{props.caption.slice(0, 100) + "... "}</p>
+                  <p>
+                    {props.caption.split("\n").length - 1 < 3
+                      ? props.caption.slice(0, 100)
+                      : props.caption.split("\n").slice(0, 3).join("\n")}
+                  </p>
                   <p
                     className="more"
                     onClick={() => {
                       setCaptionExpanded(true);
                     }}
                   >
-                    more
+                    {props.caption.split("\n").length - 1 < 3 ? null : <br />}
+                    {" "}more
                   </p>
                 </>
               )}

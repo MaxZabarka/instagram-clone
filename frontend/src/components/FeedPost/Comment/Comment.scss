@@ -12,6 +12,7 @@
     display: flex;
     .comment-content {
       a, p {
+        white-space: pre-line;
         display: inline;
       }
 

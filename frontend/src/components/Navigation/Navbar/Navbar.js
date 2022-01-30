@@ -35,7 +35,7 @@ const Navbar = (props) => {
             <Link to="/">
               <Icon type="home" filled={props.page === "home"} />
             </Link>
-            <Icon type="send" />
+            {/* <Icon type="send" /> */}
             <Link to="/explore">
               <Icon type="compass" filled={props.page === "explore"} />
             </Link>

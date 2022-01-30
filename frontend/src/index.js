@@ -10,10 +10,15 @@ ReactDOM.render(
 );
 
 //TODO
-//collapse long captions with a read more button
-//Make photos swipeable
-//Add liked by and views list (the thing between the caption and the action buttons)
-//tags
-//add date to post
-//suggestions
-//10 images limit
+//pagination
+//Add lists
+  //followers
+  //following
+  //liked
+//save posts
+//edit profile
+  //default profile image
+//better forms
+//registration
+//fake users + content
+//messaging?
