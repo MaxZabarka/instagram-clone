@@ -19,7 +19,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [allValid, setAllValid] = useState(false);
-  const validateUsername = () => {
+  const validateUsername = async () => {
     const errors = [];
     if (
       !validator.isAlphanumeric(username, "en-US", { ignore: "._" }) &&
@@ -32,43 +32,44 @@ const Register = () => {
     if (!validator.isLength(username, { min: 3, max: 15 })) {
       errors.push("Usernames must be between 3-15 characters.");
     }
-    axios
-      .post(process.env.REACT_APP_API_URL + "/exists", {
+    const response = await axios.post(
+      process.env.REACT_APP_API_URL + "/exists",
+      {
         username: username,
-      })
-      .then((response) => {
-        if (response.data.exists) {
-          setUsernameErrors([
-            ...errors,
-            <>
-              Username already registered. <Link to="/login">Log in?</Link>
-            </>,
-          ]);
-        }
-      });
+      }
+    );
+
+    if (response.data.exists) {
+      errors.push(
+        <>
+          Username already registered. <Link to="/login">Log in?</Link>
+        </>
+      );
+    }
+    console.log("errors", errors);
     return errors;
   };
 
-  const validateEmail = () => {
+  const validateEmail = async () => {
     const errors = [];
     const normalizedEmail = validator.normalizeEmail(email);
     if (!validator.isEmail(normalizedEmail)) {
       errors.push("Please enter a valid email.");
     }
-    axios
-      .post(process.env.REACT_APP_API_URL + "/exists", {
+    const response = await axios.post(
+      process.env.REACT_APP_API_URL + "/exists",
+      {
         email: normalizedEmail,
-      })
-      .then((response) => {
-        if (response.data.exists) {
-          setEmailErrors([
-            ...errors,
-            <>
-              Email already registered. <Link to="/login">Log in?</Link>
-            </>,
-          ]);
-        }
-      });
+      }
+    );
+
+    if (response.data.exists) {
+      errors.push(
+        <>
+          Email already registered. <Link to="/login">Log in?</Link>
+        </>
+      );
+    }
     return errors;
   };
 
@@ -89,25 +90,29 @@ const Register = () => {
   };
 
   useEffect(() => {
-    const usernameErrors = validateUsername();
-    const emailErrors = validateEmail();
-    const passwordErrors = validatePassword();
-    const confirmPasswordErrors = validateConfirmPassword();
-    if (
-      usernameErrors.length ||
-      emailErrors.length ||
-      passwordErrors.length ||
-      confirmPasswordErrors.length
-    ) {
-      setAllValid(false);
-    } else {
-      setAllValid(true);
-    }
+    const validate = async () => {
+      const usernameErrors = await validateUsername();
+      const emailErrors = await validateEmail();
+      const passwordErrors = validatePassword();
+      const confirmPasswordErrors = validateConfirmPassword();
+      if (
+        usernameErrors.length ||
+        emailErrors.length ||
+        passwordErrors.length ||
+        confirmPasswordErrors.length
+      ) {
+        setAllValid(false);
+      } else {
+        setAllValid(true);
+      }
+    };
+    validate();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [username, email, password, confirmPassword]);
 
   useEffect(() => {
-    validateConfirmPassword();
+    setConfirmPasswordErrors(validateConfirmPassword());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [confirmPassword]);
 
@@ -117,10 +122,10 @@ const Register = () => {
         <h1>Maxgram</h1>
         <h2>Sign up to see photos and videos from your friends.</h2>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            const usernameErrors = validateUsername();
-            const emailErrors = validateEmail();
+            const usernameErrors = await validateUsername();
+            const emailErrors = await validateEmail();
             const passwordErrors = validatePassword();
             const confirmPasswordErrors = validateConfirmPassword();
             setUsernameErrors(usernameErrors);
@@ -135,6 +140,16 @@ const Register = () => {
               confirmPasswordErrors.length
             ) {
               console.log("check failed");
+            } else {
+              axios
+                .post(process.env.REACT_APP_API_URL + "/register", {
+                  username,
+                  password,
+                  email,
+                })
+                .then((response) => {
+                  console.log("ACCOUNT CREATED");
+                });
             }
           }}
         >
@@ -143,8 +158,9 @@ const Register = () => {
             onChange={(e) => {
               setUsername(e.target.value);
             }}
-            onBlur={() => {
-              setUsernameErrors(validateUsername());
+            onBlur={async () => {
+              console.log("usernameErrors", usernameErrors);
+              setUsernameErrors(await validateUsername());
             }}
             name="username"
             placeholder="Username"
@@ -156,8 +172,8 @@ const Register = () => {
           <label for="email">Email</label>
           <input
             novalidate
-            onBlur={() => {
-              setEmailErrors(validateEmail());
+            onBlur={async () => {
+              setEmailErrors(await validateEmail());
             }}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -201,7 +217,11 @@ const Register = () => {
           {confirmPasswordErrors.map((error) => {
             return <p className="validation-error">{error}</p>;
           })}
-          <button disabled={!allValid} type="submit">Sign up</button>
+          <button disabled={!allValid} type="submit">
+            Sign up
+          </button>
+          <p className="warning">This website is is not maintained or updated and therefore may not be up to current security standards. <b>Do not enter sensitive information here.</b></p>
+
         </form>
       </Box>{" "}
       <Box className="other-box">

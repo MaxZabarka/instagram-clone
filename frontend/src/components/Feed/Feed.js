@@ -6,6 +6,7 @@ const Feed = (props) => {
   return (
     <div className="Feed">
       {props.posts.map((post, index) => {
+        console.log('post', post);
         return <FeedPost key={index} {...post}/>;
       })}
     </div>

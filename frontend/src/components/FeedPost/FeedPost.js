@@ -34,6 +34,8 @@ const FeedPost = (props) => {
   const [likesAmount, setLikesAmount] = useState(props.likesAmount);
   const [liked, setLiked] = useState(props.userLiked);
 
+  const [saved, setSaved] = useState(props.saved);
+
   const [firstLike, setFirstLike] = useState(true);
 
   const [createdComments, setCreatedComments] = useState([]);
@@ -103,6 +105,25 @@ const FeedPost = (props) => {
       })
       .catch((error) => {
         setModalTitle("Could not like post");
+        if (error.response) {
+          setModalMessage(error.response.data.errorMessage);
+        } else {
+          setModalMessage("Something went wrong");
+        }
+      });
+  };
+
+  const onSaveHandler = () => {
+    let path = saved ? "/unsave/" : "/save/";
+    setSaved(!saved)
+    axios
+      .post(process.env.REACT_APP_API_URL + path + props._id, null, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .catch((error) => {
+        setModalTitle("Could not save post");
         if (error.response) {
           setModalMessage(error.response.data.errorMessage);
         } else {
@@ -291,7 +312,7 @@ const FeedPost = (props) => {
         <div className="post-header">
           <div className="post-header-creator">
             <Link to={"/users/" + props.creator.username}>
-              <Avatar size="35rem" imageUrl={props.avatarUrl} />
+              <Avatar size="35rem" imageUrl={props.creator.avatarUrl} />
             </Link>
             <Link to={"/users/" + props.creator.username}>
               {" "}
@@ -336,7 +357,7 @@ const FeedPost = (props) => {
               </div>
             ) : null}
             <div className="save">
-              <Icon type="save" />
+              <Icon onClick={onSaveHandler} type="save" filled={saved} />
             </div>
           </div>
           <div className="post-footer-likes">
@@ -365,8 +386,8 @@ const FeedPost = (props) => {
                       setCaptionExpanded(true);
                     }}
                   >
-                    {props.caption.split("\n").length - 1 < 3 ? null : <br />}
-                    {" "}more
+                    {props.caption.split("\n").length - 1 < 3 ? null : <br />}{" "}
+                    more
                   </p>
                 </>
               )}

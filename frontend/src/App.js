@@ -14,6 +14,7 @@ import PostPage from "./pages/PostPage";
 import User from "./pages/User";
 import Register from "./pages/Register";
 import Explore from "./pages/Explore";
+import Saved from "./pages/Saved";
 require("dotenv").config();
 console.log(`process.env`, process.env);
 
@@ -82,6 +83,15 @@ function App() {
               }}
             />
             <Explore/>
+          </Route>
+          <Route exact path="/saved">
+            <Navbar
+              page="explore"
+              onCreatePost={() => {
+                inputRef.current.click();
+              }}
+            />
+            <Saved/>
           </Route>
           <Route
             path="/posts/:postId"

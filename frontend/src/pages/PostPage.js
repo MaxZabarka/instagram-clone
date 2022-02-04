@@ -1,5 +1,6 @@
 import React from "react";
 import { Get } from "react-axios";
+import { Redirect } from "react-router-dom";
 import ErrorBox from "../components/ErrorBox/ErrorBox";
 import FeedPost from "../components/FeedPost/FeedPost";
 import Spinner from "../components/Spinner/Spinner";
@@ -27,11 +28,12 @@ const PostPage = (props) => {
               if (response.status === 404) {
                 return (
                   <ErrorBox
-                    errorTitle="Sorry, this page isn't available.
-                "
+                    errorTitle="Sorry, this page isn't available."
                     errorMessage="The link you followed may be broken, or the page may have been removed."
                   />
                 );
+              } else if (response.status === 401) {
+                return <Redirect to="/login" />
               }
               errorMessage = response.data.errorMessage;
             } else {

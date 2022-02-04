@@ -15,6 +15,7 @@ import homeImageFilled from "./images/home_filled.png";
 import compassImageFilled from "./images/compass_filled.png";
 import likeImageFilled from "./images/like_filled.png";
 import commentImageFilled from "./images/comment_filled.png";
+import saveImageFilled from "./images/save_filled.png"
 
 const images = {
   likeImage,
@@ -32,6 +33,7 @@ const images = {
   compassImageFilled,
   likeImageFilled,
   commentImageFilled,
+  saveImageFilled
 };
 
 const Icon = (props) => {

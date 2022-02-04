@@ -15,10 +15,3 @@ ReactDOM.render(
   //followers
   //following
   //liked
-//save posts
-//edit profile
-  //default profile image
-//better forms
-//registration
-//fake users + content
-//messaging?
