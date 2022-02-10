@@ -15,7 +15,7 @@ const connectedUsers = {};
 io.on("connection", (socket) => {
   try {
     const token = socket.handshake.query["token"];
-    const decodedToken = jwt.verify(token, "very_secret_do_not_share_ok");
+    const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
     const userID = decodedToken.username;
     connectedUsers[userID] = socket;
     console.log(Object.keys(connectedUsers));

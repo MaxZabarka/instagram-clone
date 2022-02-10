@@ -42,25 +42,4 @@ const unlikePost = async (req, res, next) => {
   }
 };
 
-// const likeComment = async (req, res, next) => {
-//     try {
-//       result = await db.collection("posts").updateOne(
-//         {
-//           _id: ObjectId(req.params.id),
-//         },
-//         {
-//           $addToSet: {
-//             likes: req.userData._id,
-//           },
-//         }
-//       );
-//       if (result.matchedCount === 0) {
-//         throw new HttpError("Post not found", 404);
-//       }
-//       res.sendStatus(200);
-//     } catch (e) {
-//       next(e);
-//     }
-//   };
-  
 module.exports = { likePost, unlikePost };

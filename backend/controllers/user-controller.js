@@ -24,14 +24,6 @@ const getUser = async (req, res, next) => {
               },
             },
           ]
-          // { username: req.params.username },
-          // {
-          //   projection: {
-          // username: 1,
-          // bio: 1,
-          // avatarUrl: 1,
-          //   },
-          // }
         )
       ).toArray()
     )[0];
@@ -78,7 +70,6 @@ const getUser = async (req, res, next) => {
           },
         },
         { $sort: { dateAdded: -1 } },
-
         {
           $project: {
             commentsAmount: 1,
@@ -88,7 +79,7 @@ const getUser = async (req, res, next) => {
         },
       ])
     ).toArray();
-    res.send({ ...user, followersAmount, following, posts: userPosts });
+    res.send({ ...user, followersAmount, userFollowing:following, posts: userPosts });
   } catch (e) {
     return next(e);
   }

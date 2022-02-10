@@ -109,35 +109,20 @@ const explorePosts = async (req, res, next) => {
       await db.collection("posts").aggregate([
         {
           $addFields: {
-            userLiked: {
-              $in: [req.userData._id, "$likes"],
-            },
             likesAmount: {
               $size: "$likes",
             },
+            commentsAmount: {
+              $size: "$comments",
+            },
           },
-        },
-        {
-          $lookup: {
-            from: "users",
-            localField: "creator",
-            foreignField: "_id",
-            as: "creator",
-          },
-        },
-        {
-          $unwind: "$creator",
         },
         { $sort: { dateAdded: -1 } },
         {
           $project: {
             imageUrls: 1,
-            avatarUrl: 1,
-            caption: 1,
-            dateAdded: 1,
-            userLiked: 1,
             likesAmount: 1,
-            "creator.username": 1,
+            commentsAmount: 1,
           },
         },
       ])
@@ -147,13 +132,13 @@ const explorePosts = async (req, res, next) => {
     return next(e);
   }
 };
-
+const POSTS_PER_PAGE = 5;
 const getPosts = async (req, res, next) => {
   try {
     const following = (
       await db.collection("users").findOne({ _id: req.userData._id })
     ).following;
-    console.log(following);
+    console.log("following :>> ", following);
     const result = await (
       await db.collection("posts").aggregate([
         {
@@ -161,6 +146,9 @@ const getPosts = async (req, res, next) => {
             creator: { $in: [...following, req.userData._id] },
           },
         },
+        { $sort: { dateAdded: -1 } },
+        { $skip: POSTS_PER_PAGE * req.query.page },
+        { $limit: POSTS_PER_PAGE },
         {
           $lookup: {
             from: "users",
@@ -182,10 +170,31 @@ const getPosts = async (req, res, next) => {
             },
           },
         },
-        { $sort: { dateAdded: -1 } },
-        { $project: { comments: 0, likes: 0 } },
+        {
+          $project: {
+            comments: 0,
+            likes: 0,
+            "creator.email": 0,
+            "creator.password": 0,
+            "creator.bio": 0,
+            "creator.following": 0,
+            "creator.savedPosts": 0,
+          },
+        },
       ])
     ).toArray();
+
+    await Promise.all(
+      result.map(async (post) => {
+        post.saved = !!(await db.collection("users").count({
+          _id: req.userData._id,
+          savedPosts: post._id,
+        }));
+        console.log("post._id :>> ", post._id);
+        console.log("post.saved :>> ", post.saved);
+      })
+    );
+    console.log("DONE");
     res.json(result);
   } catch (e) {
     return next(e);
@@ -218,10 +227,28 @@ const getPost = async (req, res, next) => {
             },
           },
         },
-        { $project: { comments: 0 } },
+        {
+          $project: {
+            comments: 0,
+            "creator.email": 0,
+            "creator.password": 0,
+            "creator.bio": 0,
+            "creator.following": 0,
+          },
+        },
       ])
     ).toArray();
     if (result && result.length) {
+      console.log(
+        "req.userData._id, req.params.id :>> ",
+        req.userData._id,
+        req.params.id
+      );
+      const saved = !!(await db.collection("users").count({
+        _id: req.userData._id,
+        savedPosts: ObjectId(req.params.id),
+      }));
+      result[0].saved = saved;
       res.json(result[0]);
     } else {
       return next(new HttpError("Post not found", 404));
@@ -247,7 +274,7 @@ const deletePost = async (req, res, next) => {
     return next(new HttpError("Post could not be found"), 404);
   }
 
-  if (post.creator !== req.userData.username) {
+  if (!post.creator.equals(req.userData._id)) {
     return next(new HttpError("You are not allowed to  delete this post"), 403);
   }
   await db.collection("posts").deleteOne({ _id: post._id });

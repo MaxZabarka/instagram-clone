@@ -10,7 +10,7 @@ const checkAuth = async (req, res, next) => {
         401
       );
     }
-    const decodedToken = jwt.verify(token, "very_secret_do_not_share_ok");
+    const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
     req.userData = {
       ...(await getUser(decodedToken.username)),
       username: decodedToken.username,
@@ -19,7 +19,6 @@ const checkAuth = async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-
     next(
       new HttpError(
         "Authentication failed. Try logging out and logging back in.",
