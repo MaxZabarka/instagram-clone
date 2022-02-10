@@ -6,9 +6,11 @@ import ErrorBox from "../components/ErrorBox/ErrorBox";
 import PostGrid from "../components/PostGrid/PostGrid";
 import Spinner from "../components/Spinner/Spinner";
 import "./User.scss";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import Modal from "../components/Modal/Modal";
 
 const User = (props) => {
+  const history = useHistory()
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -45,7 +47,10 @@ const User = (props) => {
                 "The link you followed may be broken, or the page may have been removed.",
               title: "Sorry, this page isn't available.",
             });
-          } else {
+          } else if (error.response.status===401) {
+            history.push("/login")
+          } 
+          else {
             setError({
               title: null,
               message: error.response.errorMessage,
@@ -86,7 +91,7 @@ const User = (props) => {
               const reader = new FileReader();
 
               reader.readAsDataURL(file);
-              
+
               reader.onload = function (e) {
                 setNewImage(e.target.result);
               };
@@ -144,7 +149,7 @@ const User = (props) => {
                 >
                   {editing ? "Save" : "Edit Profile"}
                 </button>
-              ) : response.following ? (
+              ) : response.userFollowing ? (
                 <button
                   className="secondary"
                   onClick={() => {
@@ -162,7 +167,7 @@ const User = (props) => {
                         }
                       )
                       .then(() => {
-                        setResponse({ ...response, following: false });
+                        setResponse({ ...response, userFollowing: false });
                       });
                   }}
                 >
@@ -185,7 +190,7 @@ const User = (props) => {
                         }
                       )
                       .then(() => {
-                        setResponse({ ...response, following: true });
+                        setResponse({ ...response, userFollowing: true });
                       });
                   }}
                 >
@@ -198,7 +203,7 @@ const User = (props) => {
                 <h2>{response.posts.length}</h2>
                 <p>posts</p>
               </div>
-              <div>
+              <div >
                 <h2>{response.followersAmount}</h2>
                 <p>followers</p>
               </div>

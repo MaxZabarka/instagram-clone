@@ -4,22 +4,52 @@ import Avatar from "../../Avatar/Avatar";
 import Icon from "../../Icon/Icon";
 import "./Navbar.scss";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+import Spinner from "../../Spinner/Spinner";
+
+const SEARCH_DEBOUNCE = 500;
 
 const Navbar = (props) => {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef(null);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const profileDropdownRef = useRef(null);
   const avatarRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
+
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [searchedUsers, setSearchedUsers] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(true);
+
+  const searchDropdownRef = useRef(null);
+
   const history = useHistory();
   window.onclick = (e) => {
-    console.log("window click");
-    // avatar icon clicked or child of dropdown clicked
-    if (e.target === avatarRef.current || e.target.closest(".dropdown")) return;
-    console.log("past");
-    if (showDropdown && e.target !== dropdownRef.current) {
-      console.log(dropdownRef.current);
-      console.log(e.target);
-      setShowDropdown(false);
+    // avatar icon clicked or child of profiledropdown clicked
+    if (
+      !(e.target === avatarRef.current || e.target.closest(".profile-dropdown"))
+    ) {
+      if (showProfileDropdown && e.target !== profileDropdownRef.current) {
+        setShowProfileDropdown(false);
+      }
     }
+
+    if (
+      !(
+        e.target === searchDropdownRef.current ||
+        e.target.closest(".search-dropdown")
+      )
+    ) {
+      if (showSearchDropdown && e.target !== searchDropdownRef.current) {
+        setShowSearchDropdown(false);
+      }
+    }
+  };
+
+  const searchHandler = async (query) => {
+    const response = await axios.get(
+      process.env.REACT_APP_API_URL + "/search/" + query
+    );
+    setSearchedUsers(response.data);
+    setSearchLoading(false);
   };
   return (
     <>
@@ -29,6 +59,43 @@ const Navbar = (props) => {
             <Link to="/">
               <h1>Maxgram</h1>
             </Link>
+          </div>
+          <div className="search">
+            <Icon size="15rem" type="search" />
+            <input
+              onChange={(e) => {
+                setShowSearchDropdown(!!e.target.value);
+                clearTimeout(searchTimeoutRef.current);
+                setSearchLoading(true);
+                searchTimeoutRef.current = setTimeout(() => {
+                  if (e.target.value) {
+                    searchHandler(e.target.value);
+                  }
+                }, SEARCH_DEBOUNCE);
+              }}
+              placeholder="Search"
+            />
+            {showSearchDropdown ? (
+              <div className="search-dropdown" ref={searchDropdownRef}>
+                {searchLoading ? (
+                  <Spinner size="3rem" />
+                ) : searchedUsers.length ? (
+                  searchedUsers.map((user) => {
+                    return (
+                      <Link
+                        className="user-search"
+                        to={"/users/" + user.username}
+                      >
+                        <Avatar size="40rem" imageUrl={user.avatarUrl} />
+                        <p>{user.username}</p>
+                      </Link>
+                    );
+                  })
+                ) : (
+                  <p className="no-results">No results found.</p>
+                )}
+              </div>
+            ) : null}
           </div>
 
           <div className="actions">
@@ -53,14 +120,14 @@ const Navbar = (props) => {
               <Avatar
                 ref={avatarRef}
                 onClick={() => {
-                  setShowDropdown(true);
+                  setShowProfileDropdown(true);
                 }}
                 imageUrl={localStorage.getItem("avatarUrl")}
               />
             ) : null}
 
-            {showDropdown ? (
-              <div ref={dropdownRef} className="dropdown">
+            {showProfileDropdown ? (
+              <div ref={profileDropdownRef} className="profile-dropdown">
                 <ul>
                   <li>
                     <Link to={"/users/" + localStorage.getItem("username")}>

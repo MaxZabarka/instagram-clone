@@ -4,6 +4,8 @@ import PostGrid from "../components/PostGrid/PostGrid";
 import Spinner from "../components/Spinner/Spinner";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Box from "../components/Box/Box";
+import "./Saved.scss";
 
 const Saved = () => {
   const [response, setResponse] = useState(null);
@@ -56,16 +58,10 @@ const Saved = () => {
       response.length > 0 ? (
         <PostGrid posts={response} />
       ) : (
-        <h2 style={{ textAlign: "center", fontWeight:"500" }}>
-          You don't have any posts saved.{" "}
-          <br/>
-          <Link
-            style={{ color: "#008cff", textDecoration: "underline" }}
-            to="/explore"
-          >
-            Go save some!
-          </Link>
-        </h2>
+        <Box className="Saved empty">
+          <h2>You don't have any posts saved. </h2>
+          <Link to="/explore">Go save some!</Link>
+        </Box>
       );
   } else {
     main = <Spinner />;

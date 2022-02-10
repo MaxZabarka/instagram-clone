@@ -5,7 +5,7 @@ import defaultImage from "./default.jpg";
 const Avatar = forwardRef((props, ref) => {
   const size = props.size || "25rem";
   console.log("props.imageUrl", props.imageUrl);
-
+  console.log('props', props);
   return (
     <div style={{ position: "relative" }}>
       <img

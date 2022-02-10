@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import Box from "../components/Box/Box";
 import "./Register.scss";
 import validator from "validator";
@@ -89,6 +90,8 @@ const Register = () => {
     return errors;
   };
 
+  const history = useHistory()
+
   useEffect(() => {
     const validate = async () => {
       const usernameErrors = await validateUsername();
@@ -148,7 +151,9 @@ const Register = () => {
                   email,
                 })
                 .then((response) => {
-                  console.log("ACCOUNT CREATED");
+                  localStorage.setItem("token", response.data.token)
+                  localStorage.setItem("username", response.data.username)
+                  history.push("/")
                 });
             }
           }}

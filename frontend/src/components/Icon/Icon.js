@@ -16,6 +16,7 @@ import compassImageFilled from "./images/compass_filled.png";
 import likeImageFilled from "./images/like_filled.png";
 import commentImageFilled from "./images/comment_filled.png";
 import saveImageFilled from "./images/save_filled.png"
+import searchImage from "./images/search.png"
 
 const images = {
   likeImage,
@@ -33,7 +34,8 @@ const images = {
   compassImageFilled,
   likeImageFilled,
   commentImageFilled,
-  saveImageFilled
+  saveImageFilled,
+  searchImage
 };
 
 const Icon = (props) => {

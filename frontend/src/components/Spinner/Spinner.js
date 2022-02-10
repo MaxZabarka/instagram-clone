@@ -2,10 +2,10 @@ import React from 'react';
 import "./Spinner.scss"
 import spinnerImage from "./spinner.png"
 
-const Spinner = () => {
+const Spinner = (props) => {
     return (
         <div className="Spinner">
-            <img src={spinnerImage} alt="loading spinner"/>
+            <img src={spinnerImage} style={{ width: props.size }} alt="loading spinner" />
         </div>
     );
 };

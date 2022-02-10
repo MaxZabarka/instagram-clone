@@ -2,4 +2,29 @@
   margin: auto;
   width: 100%;
   max-width: 38rem;
+  .bottom {
+    margin: 2rem 0;
+    padding-bottom: 2rem;
+    padding-top: 1rem;
+    text-align: center;
+    a {
+      font-weight: bold;
+      color: #008cff;
+    }
+  }
+  .scroll-bottom {
+    position: relative;
+    .intersection-observer {
+      visibility: hidden;
+      top:-10rem;
+      left:0;
+      position: absolute;
+      border: 1px solid red;
+      height: 10rem;
+    }
+  }
+}
+* {
+  -webkit-overflow-scrolling: auto !important;
+
 }

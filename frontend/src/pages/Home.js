@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Feed from "../components/Feed/Feed";
 import { Get } from "react-axios";
 import { useHistory } from "react-router";
@@ -14,20 +14,37 @@ const Home = (props) => {
   if (!localStorage.getItem("token")) {
     history.push("/login");
   }
-  const [posts, setPosts] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
+  const [finished, setFinished] = useState(false);
+  const [noPosts, setNoPosts] = useState(false)
+
+  const pageIndex = useRef(0)
+  const loading = useRef(false)
+
 
   const getPosts = () => {
+    if (loading.current) return;
+    loading.current = true;
     console.log("GET POSTS");
     axios
-      .get(process.env.REACT_APP_API_URL + "/posts", {
+      .get(process.env.REACT_APP_API_URL + "/posts?page=" + pageIndex.current, {
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
       })
       .then((response) => {
-        console.log("response.data", response.data);
-        setPosts(response.data);
+        if (response.data.length === 0) {
+          setFinished(true)
+        }
+        loading.current = false
+        pageIndex.current = pageIndex.current + 1
+        if (posts.length === 0 && response.data.length === 0) {
+          setNoPosts(true)
+        }
+        setPosts([...posts, ...response.data]);
+      
       })
       .catch((error) => {
+        loading.current = false
         if (error.response) {
           // Request made and server responded
           if (error.response.status === 404) {
@@ -62,17 +79,13 @@ const Home = (props) => {
       });
   };
 
-  useEffect(() => {
-    getPosts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  console.log("HERER");
-  console.log('error,posts', error, posts);
+
+
   let main;
   if (error) {
     main = <ErrorBox errorTitle={error.title} errorMessage={error.message} />;
   } else if (posts) {
-    main = <Feed posts={posts} />;
+    main = <Feed noPosts={noPosts} finished={finished} posts={posts} onLoadMore={getPosts} />;
   } else {
     console.log("HELICOPETERs");
     main = <Spinner />;
@@ -98,29 +111,6 @@ const Home = (props) => {
       )}
 
       {main}
-      {/* <Get
-        url={process.env.REACT_APP_API_URL+"/posts"}
-        config={{
-          headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-        }}
-      >
-        {(error, response, isLoading, makeRequest, axios) => {
-          if (error) {
-            let errorMessage;
-            if (response) {
-              errorMessage = response.data.errorMessage;
-            } else {
-              errorMessage = error.message;
-            }
-            return <ErrorBox errorMessage={errorMessage} retry={makeRequest} />;
-          } else if (isLoading) {
-            return <Spinner />;
-          } else if (response !== null) {
-            return <Feed posts={response.data}  />;
-          }
-          return <></>;
-        }}
-      </Get> */}
     </div>
   );
 };
