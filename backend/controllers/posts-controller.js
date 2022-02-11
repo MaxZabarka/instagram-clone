@@ -104,6 +104,7 @@ const createPost = (req, res, next) => {
 };
 
 const explorePosts = async (req, res, next) => {
+  console.log('"HERE"', "HERE")
   try {
     const result = await (
       await db.collection("posts").aggregate([
