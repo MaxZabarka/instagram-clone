@@ -43,9 +43,12 @@ const { search } = require("./controllers/search-controller");
 const app = express();
 
 app.use(express.json());
+
 app.use((req, res, next) => {
   console.log('req.originalUrl', req.originalUrl)
+  next()
 });
+
 app.use(cors());
 
 app.post("api/register", register);
