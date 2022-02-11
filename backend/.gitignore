@@ -2,3 +2,4 @@ uploads/images/
 node_modules/
 .env
 .vercel
+start.sh
