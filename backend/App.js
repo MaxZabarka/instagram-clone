@@ -46,37 +46,43 @@ app.use(express.json());
 
 app.use(cors());
 
-app.post("/register", register);
-app.post("/login", login);
-app.post("/exists/", exists);
-app.use("/uploads/images", express.static(path.join("uploads", "images")));
-app.get("/explore", explorePosts);
-app.get("/search/:query", search);
+app.post("api/register", register);
+app.post("api/login", login);
+app.post("api/exists/", exists);
+app.use("api/uploads/images", express.static(path.join("uploads", "images")));
+app.get("api/explore", explorePosts);
+app.get("api/search/:query", search);
 
 app.use(checkAuth);
 
-app.get("/users/:username", getUser);
-app.get("/comments/:id", getComments);
-app.post("/comments/:id", postComment);
+app.get("api/users/:username", getUser);
+app.get("api/comments/:id", getComments);
+app.post("api/comments/:id", postComment);
 
-app.post("/like/:id", likePost);
-app.post("/unlike/:id", unlikePost);
+app.post("api/like/:id", likePost);
+app.post("api/unlike/:id", unlikePost);
 
-app.delete("/posts/delete/:id", deletePost);
-app.get("/posts", getPosts);
+app.delete("api/posts/delete/:id", deletePost);
+app.get("api/posts", getPosts);
 
-app.get("/posts/:id", getPost);
-app.post("/posts", socketHandler, uploadProgress, fileUpload.any(), createPost);
+app.get("api/posts/:id", getPost);
+app.post(
+  "api/posts",
+  socketHandler,
+  uploadProgress,
+  fileUpload.any(),
+  createPost
+);
 
-app.post("/follow/:id", followUser);
-app.post("/unfollow/:id", unfollowUser);
+app.post("api/follow/:id", followUser);
+app.post("api/unfollow/:id", unfollowUser);
 
-app.post("/save/:id", savePost);
-app.post("/unsave/:id", unSavePost);
-app.get("/saved", getSavedPosts);
+app.post("api/save/:id", savePost);
+app.post("api/unsave/:id", unSavePost);
+app.get("api/saved", getSavedPosts);
 
-app.put("/update-bio", updateBio);
-app.put("/update-profile", fileUpload.single("file"), updateProfile);
+app.put("api/update-bio", updateBio);
+app.put("api/update-profile", fileUpload.single("file"), updateProfile);
 
 app.use((req, res, next) => {
   throw new HttpError("Couldn't find this page.", 404);
