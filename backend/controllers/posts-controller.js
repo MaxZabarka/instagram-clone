@@ -138,7 +138,6 @@ const getPosts = async (req, res, next) => {
     const following = (
       await db.collection("users").findOne({ _id: req.userData._id })
     ).following;
-    console.log("following :>> ", following);
     const result = await (
       await db.collection("posts").aggregate([
         {
@@ -190,11 +189,8 @@ const getPosts = async (req, res, next) => {
           _id: req.userData._id,
           savedPosts: post._id,
         }));
-        console.log("post._id :>> ", post._id);
-        console.log("post.saved :>> ", post.saved);
       })
     );
-    console.log("DONE");
     res.json(result);
   } catch (e) {
     return next(e);
@@ -239,11 +235,7 @@ const getPost = async (req, res, next) => {
       ])
     ).toArray();
     if (result && result.length) {
-      console.log(
-        "req.userData._id, req.params.id :>> ",
-        req.userData._id,
-        req.params.id
-      );
+
       const saved = !!(await db.collection("users").count({
         _id: req.userData._id,
         savedPosts: ObjectId(req.params.id),

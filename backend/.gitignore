@@ -1,3 +1,4 @@
 uploads/images/
 node_modules/
 .env
+.vercel

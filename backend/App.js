@@ -1,10 +1,10 @@
 require("dotenv").config();
 
 if (!process.env.MONGODB_URI) {
-  throw new Error("Provide a MONGODB_URI in .env")  
+  throw new Error("Provide a MONGODB_URI in .env");
 }
 if (!process.env.SECRET_KEY) {
-  throw new Error("Provide a SECRET_KEY in .env")  
+  throw new Error("Provide a SECRET_KEY in .env");
 }
 require("./util/http-error");
 const express = require("express");
@@ -20,7 +20,7 @@ const {
   explorePosts,
   getPosts,
 } = require("./controllers/posts-controller");
-const socketHandler = require("./util/socket-handler");
+const { socketHandler, initWs } = require("./util/socket-handler");
 const checkAuth = require("./middleware/check-auth");
 const uploadProgress = require("./middleware/upload-progress");
 const {
@@ -31,7 +31,11 @@ const { likePost, unlikePost } = require("./controllers/likes-controller");
 const { getUser } = require("./controllers/user-controller");
 const { followUser, unfollowUser } = require("./controllers/follow-controller");
 const { exists } = require("./controllers/exists-controller");
-const { savePost, unSavePost, getSavedPosts } = require("./controllers/save-controller");
+const {
+  savePost,
+  unSavePost,
+  getSavedPosts,
+} = require("./controllers/save-controller");
 const { login, register } = require("./controllers/auth-controller");
 const { updateBio, updateProfile } = require("./controllers/edit-controller");
 const { search } = require("./controllers/search-controller");
@@ -42,12 +46,12 @@ app.use(express.json());
 
 app.use(cors());
 
-app.post("/register", register)
+app.post("/register", register);
 app.post("/login", login);
 app.post("/exists/", exists);
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
 app.get("/explore", explorePosts);
-app.get("/search/:query", search)
+app.get("/search/:query", search);
 
 app.use(checkAuth);
 
@@ -67,12 +71,12 @@ app.post("/posts", socketHandler, uploadProgress, fileUpload.any(), createPost);
 app.post("/follow/:id", followUser);
 app.post("/unfollow/:id", unfollowUser);
 
-app.post("/save/:id", savePost)
-app.post("/unsave/:id", unSavePost)
-app.get("/saved", getSavedPosts)
+app.post("/save/:id", savePost);
+app.post("/unsave/:id", unSavePost);
+app.get("/saved", getSavedPosts);
 
-app.put("/update-bio", updateBio)
-app.put("/update-profile", fileUpload.single("file"), updateProfile)
+app.put("/update-bio", updateBio);
+app.put("/update-profile", fileUpload.single("file"), updateProfile);
 
 app.use((req, res, next) => {
   throw new HttpError("Couldn't find this page.", 404);
@@ -87,6 +91,8 @@ app.use((error, req, res, next) => {
   res.json({ errorMessage: error.message || "Unknown error occurred" });
 });
 
-app.listen(5000, () => {
-  console.log("Listening on port 5000");
+const port = process.env.PORT || 5000;
+const server = app.listen(port, () => {
+  console.log("Listening on port " + port);
+  initWs(server);
 });

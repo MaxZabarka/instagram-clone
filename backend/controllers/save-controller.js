@@ -67,10 +67,7 @@ const getSavedPosts = async (req, res, next) => {
       },
     ])
   ).toArray();
-  console.log("result :>> ", result);
-  //   result = await (
-  //     await db.collection("posts").find({ _id: { $in: req.userData.savedPosts } })
-  //   ).toArray();
+
   res.json(result);
 };
 module.exports = { savePost, unSavePost, getSavedPosts };
