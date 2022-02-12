@@ -49,7 +49,7 @@ const uploadPost = (
     formData.append("images", dataURItoBlob(image));
   }
   formData.append("document", jsonData);
-  const socket = io.connect(process.env.REACT_APP_API_URL, {
+  const socket = io.connect(process.env.REACT_APP_API_URL.replace("/api",""), {
     reconnection: false,
     transports: ["websocket"],
     query: {
