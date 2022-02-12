@@ -6,6 +6,7 @@ if (!process.env.MONGODB_URI) {
 if (!process.env.SECRET_KEY) {
   throw new Error("Provide a SECRET_KEY in .env");
 }
+fs = require("fs")
 require("./util/http-error");
 const express = require("express");
 const path = require("path");
@@ -47,7 +48,7 @@ app.use(express.json());
 
 app.use(cors());
 
-app.use(express.static(path.join(__dirname, '../frontend/build')))
+app.use(express.static(path.join(__dirname, '../frontend/build'),{dotfiles: 'allow'}))
 
 app.get('*', (req, res, next) => {
 	console.log("req.baseUrl", req.path)
@@ -98,13 +99,23 @@ app.use((error, req, res, next) => {
   console.log(error);
   if (res.headerSent) {
     return next(error);
-  }
+ }
   res.status(error.code || 500);
   res.json({ errorMessage: error.message || "Unknown error occurred" });
 });
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 443;
 const server = app.listen(port, () => {
   console.log("Listening on port " + port);
   initWs(server);
 });
+
+if (process.env.USE_SSL==="true") {
+console.log("using ssl")
+const options = {
+  key: fs.readFileSync("./ssl/key.pem"),
+  cert: fs.readFileSync("./ssl/cert.pem")
+};
+https.createServer(options, app).listen(port);
+
+}
