@@ -9,9 +9,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-//TODO
-//search
-//secret key
-//server side validation
-//third party auth

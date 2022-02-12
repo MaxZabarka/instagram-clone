@@ -32,15 +32,8 @@ const Navbar = (props) => {
       }
     }
 
-    if (
-      !(
-        e.target === searchDropdownRef.current ||
-        e.target.closest(".search-dropdown")
-      )
-    ) {
-      if (showSearchDropdown && e.target !== searchDropdownRef.current) {
-        setShowSearchDropdown(false);
-      }
+    if (showSearchDropdown && e.target !== searchDropdownRef.current) {
+      setShowSearchDropdown(false);
     }
   };
 

@@ -1,13 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Get } from "react-axios";
 import Avatar from "../components/Avatar/Avatar";
 import ErrorBox from "../components/ErrorBox/ErrorBox";
 import PostGrid from "../components/PostGrid/PostGrid";
 import Spinner from "../components/Spinner/Spinner";
 import "./User.scss";
-import { Link, useHistory } from "react-router-dom";
-import Modal from "../components/Modal/Modal";
+import { useHistory } from "react-router-dom";
 
 const User = (props) => {
   const history = useHistory()
@@ -70,7 +68,7 @@ const User = (props) => {
           });
         }
       });
-  }, [username]);
+  }, [username, history]);
 
   let main;
   if (error) {

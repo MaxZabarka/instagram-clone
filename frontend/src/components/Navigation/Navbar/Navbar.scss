@@ -50,6 +50,9 @@
         // display: flex;
         // flex-direction: column;
         .user-search {
+          &:hover {
+            background: rgb(243, 243, 243);
+          }
           align-items: center;
           display: flex;
           // border:1px solid red;

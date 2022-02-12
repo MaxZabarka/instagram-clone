@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import formatDate from "../../../util/image-processing/formatDate";
 import Avatar from "../../Avatar/Avatar";
-import Icon from "../../Icon/Icon";
 import "./Comment.scss";
 
 const Comment = (props) => {

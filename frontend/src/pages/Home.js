@@ -1,13 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Feed from "../components/Feed/Feed";
-import { Get } from "react-axios";
 import { useHistory } from "react-router";
 import Spinner from "../components/Spinner/Spinner";
 import ErrorBox from "../components/ErrorBox/ErrorBox";
 import PostProgress from "../components/PostProgress/PostProgress";
-import PostGrid from "../components/PostGrid/PostGrid";
 import axios from "axios";
-import InfiniteScroll from "react-infinite-scroller";
 
 const Home = (props) => {
   const history = useHistory();

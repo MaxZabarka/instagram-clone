@@ -8,6 +8,7 @@ import axios from "axios";
 import StrengthMeter from "../components/StrengthMeter/StrengthMeter";
 import zxcvbn from "zxcvbn";
 
+
 const Register = () => {
   const [usernameErrors, setUsernameErrors] = useState([]);
   const [emailErrors, setEmailErrors] = useState([]);

@@ -8,7 +8,6 @@ import io from "socket.io-client";
 import Modal from "../Modal/Modal";
 import { useHistory } from "react-router-dom";
 
-
 const readImage = (file) => {
   return new Promise((resolve, reject) => {
     var fileReader = new FileReader();
@@ -50,8 +49,9 @@ const uploadPost = (
     formData.append("images", dataURItoBlob(image));
   }
   formData.append("document", jsonData);
-  const socket = io(process.env.REACT_APP_API_WEBSOCKET_URL, {
+  const socket = io.connect(process.env.REACT_APP_API_URL, {
     reconnection: false,
+    transports: ["websocket"],
     query: {
       token: localStorage.getItem("token"),
     },
@@ -59,11 +59,10 @@ const uploadPost = (
   selfRef.current.imagesProcessed = 0;
   socket.on("connect", () => {
     axios
-      .post(process.env.REACT_APP_API_URL+"/posts", formData, {
+      .post(process.env.REACT_APP_API_URL + "/posts", formData, {
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
       })
       .catch((error) => {
-        
         if (error.response) {
           setModalMessage(error.response.data.errorMessage);
         } else {
@@ -106,7 +105,7 @@ const uploadPost = (
 };
 
 const CreatePost = withAxios((props) => {
-  const history = useHistory()
+  const history = useHistory();
   const [images, setImages] = useState([]);
   const [modalMessage, setModalMessage] = useState("");
   const selfRef = useRef(null);
@@ -165,7 +164,7 @@ const CreatePost = withAxios((props) => {
                   orderedImages[imageOrder[i]] = images[i];
                 }
               }
-              history.push("/")
+              history.push("/");
               uploadPost(
                 props.axios,
                 orderedImages,

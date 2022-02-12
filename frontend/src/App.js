@@ -37,7 +37,7 @@ function App() {
   const inputRef = useRef(null);
   console.log(`modalMessage`, modalMessage);
   return (
-    <Router>
+    <Router basename="/">
       <div className="App">
         <Modal
           show={modalMessage}
