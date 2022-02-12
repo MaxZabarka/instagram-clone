@@ -103,19 +103,20 @@ app.use((error, req, res, next) => {
   res.status(error.code || 500);
   res.json({ errorMessage: error.message || "Unknown error occurred" });
 });
+let options = {}
+if (process.env.USE_SSL==="true") {
+  console.log("using ssl")
+  options = {
+    key: fs.readFileSync("./ssl/key.pem"),
+    cert: fs.readFileSync("./ssl/cert.pem")
+  };
+}
 
 const port = process.env.PORT || 443;
-const server = app.listen(port, () => {
+const server = https.createServer(options, app).listen(port, () => {
   console.log("Listening on port " + port);
   initWs(server);
 });
 
-if (process.env.USE_SSL==="true") {
-console.log("using ssl")
-const options = {
-  key: fs.readFileSync("./ssl/key.pem"),
-  cert: fs.readFileSync("./ssl/cert.pem")
-};
-https.createServer(options, app).listen(port);
 
-}
+
