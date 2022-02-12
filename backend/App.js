@@ -49,8 +49,9 @@ app.use(cors());
 
 app.use(express.static(path.join(__dirname, '../frontend/build')))
 
-app.get('*', (req, res) => {
-  if (req.baseUrl === "/api") {
+app.get('*', (req, res, next) => {
+	console.log("req.baseUrl", req.path)
+  if (req.path.startsWith("/api")) {
     return next()
   }
   res.sendFile(path.join(__dirname + '/../frontend/build/index.html'))
