@@ -1,7 +1,7 @@
 
 # Maxgram
 
-A clone of a Instagram created with MERN stack.
+A clone of Instagram created with MERN stack.
 
 ## Demo
 
