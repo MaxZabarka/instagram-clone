@@ -25,6 +25,7 @@ https://maxgram.zabarka.com/
 - React
 - Node
 - SCSS
+- Socket.IO
 - Multer
 - AWS
 - pm2
