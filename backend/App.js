@@ -47,6 +47,15 @@ app.use(express.json());
 
 app.use(cors());
 
+app.use(express.static(path.join(__dirname, '../frontend/build')))
+
+app.get('*', (req, res) => {
+  if (req.baseUrl === "/api") {
+    return next()
+  }
+  res.sendFile(path.join(__dirname + '/../frontend/build/index.html'))
+})
+
 app.post("/api/register", register);
 app.post("/api/login", login);
 app.post("/api/exists/", exists);
@@ -78,6 +87,7 @@ app.get("/api/saved", getSavedPosts);
 
 app.put("/api/update-bio", updateBio);
 app.put("/api/update-profile", fileUpload.single("file"), updateProfile);
+
 
 app.use((req, res, next) => {
   throw new HttpError("Couldn't find this page.", 404);
